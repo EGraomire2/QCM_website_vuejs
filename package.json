@@ -1,0 +1,32 @@
+{
+  "name": "qcm_website_vuejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "client": "cd client && npm run serve",
+    "server": "cd server && node app.js",
+    "dev": "concurrently --kill-others \"npm run server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EGraomire2/QCM_website_vuejs.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/EGraomire2/QCM_website_vuejs/issues"
+  },
+  "homepage": "https://github.com/EGraomire2/QCM_website_vuejs#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "mysql2": "^3.15.3"
+  }
+}

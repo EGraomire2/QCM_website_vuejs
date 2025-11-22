@@ -1,10 +1,10 @@
 -- create schema projet_QCM;
 use sos_prepa_bdd;
 
-drop table if exists accountt, attempt, question, has_answered, possible_answer, answer_question, qcm, Subjectt, Chapter;
+drop table if exists users, attempt, question, has_answered, possible_answer, answer_question, qcm, Subjectt, Chapter;
 
 -- Table Compte
-CREATE TABLE Accountt(
+CREATE TABLE users(
     ID_user INT NOT NULL,
     Administrator BOOLEAN NOT NULL,
     Teacher BOOLEAN NOT NULL,

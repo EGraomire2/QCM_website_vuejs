@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion</title>
+  <link rel="stylesheet" href="css/login.css">
+</head>
+
+<body>
+  <!-- Affichage des messages flash -->
+  
+  <div class="flash-message">
+      
+  </div>
+  
+
+  <div class="container">
+    <div id="error-container" style="color:red;"></div>
+    <form id="login-form">
+      <h2>S'identifier :</h2>
+      <div class="inputBox">
+        <input type="text" name="email" placeholder="Adresse e-mail" required>
+      </div>
+      <div class="inputBox">
+        <input type="password" name="password" placeholder="Mot de passe" required>
+      </div>
+      <div class="inputBox">
+        <input type="submit" name="connexion" value="Connexion">
+      </div>
+      <div class="inputBox">
+        <p>Pas encore de compte ? <a href="register.php">Inscrivez-vous</a></p>
+      </div>
+    </form>
+  </div>
+  <script src="js/login.js"></script>
+</body>
+</html>

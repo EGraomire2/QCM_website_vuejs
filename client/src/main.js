@@ -1,4 +1,8 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+// importer l'instance du router (index.js doit exporter par défaut le router)
+import router from './router'
 
-createApp(App).mount('#app')
+const app = createApp(App)
+app.use(router)
+app.mount('#app')

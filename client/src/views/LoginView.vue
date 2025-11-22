@@ -32,7 +32,7 @@
 import '@/assets/create-qcm.css';
 
 export default {
-  name: 'Login',
+  name: 'LoginView',
   data() {
     return { form: { email: '', password: '' } };
   },

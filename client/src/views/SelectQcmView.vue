@@ -30,7 +30,7 @@
 import '@/assets/create-qcm.css';
 
 export default {
-  name: 'SelectQcm',
+  name: 'SelectQcmView',
   data() {
     return {
       qcms: [

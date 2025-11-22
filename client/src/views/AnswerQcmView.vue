@@ -39,7 +39,7 @@
 import '@/assets/create-qcm.css';
 
 export default {
-  name: 'AnswerQcm',
+  name: 'AnswerQcmView',
   data() {
     return {
       qcm: { title: '', description: '' },

@@ -33,7 +33,7 @@
 import '@/assets/create-qcm.css';
 
 export default {
-  name: 'CreateQcm',
+  name: 'CreateQcmView',
   data() {
     return {
       qcm: { title: '', description: '' }

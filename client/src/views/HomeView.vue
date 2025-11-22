@@ -57,7 +57,7 @@
 
 <script>
 export default {
-  name: 'Home',
+  name: 'HomeView',
   methods: {
     goToSelectQcm() {
       // simple navigation vers la page liste de QCM (ajustez selon votre router)

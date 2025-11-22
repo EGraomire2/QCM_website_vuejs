@@ -37,7 +37,7 @@
 import '@/assets/create-qcm.css';
 
 export default {
-  name: 'Register',
+  name: 'RegisterView',
   data() {
     return {
       form: { username: '', email: '', password: '' }

@@ -35,7 +35,7 @@
 
 <script>
 export default {
-  name: 'Lessons',
+  name: 'LessonsView',
   data() {
     return {
       selectedPdf: '',

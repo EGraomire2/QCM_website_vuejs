@@ -1,0 +1,667 @@
+:root{
+    --bar-width: 30px;
+    --bar-height: 4px;
+    --hamburger-gap: 6px;
+    --forground: #97c6bc;
+    --animation-timing: 0.2s ease-in-out;
+    
+    --color-header: #051C1F;
+    --color-scrolled-header: #15323675;
+    --color-acc-green0: #44a388;
+    --color-acc-green1: #3cdd9a;
+    --color-background0: #051c1f;
+    --color-background1: #193f37;
+    --color-background2: #042222;
+    --color-background3: #021A1A;
+}
+
+header, footer {
+    margin: 0;
+    color: #AACBC4;
+    text-align: center;
+}
+
+a {
+    color: var(--color-acc-green1);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+a:hover {
+    color: #d7f0ea;
+}
+
+nav {
+    flex: 1;
+}
+
+nav ul {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    list-style: none;
+    padding: 20px 40px;
+    margin: 0 auto;
+    max-width: 700px; 
+    width: 100%;
+}
+
+nav a {
+    color: #97c6bc;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+h1{
+    font-size: 36px;
+    text-align: center;
+}
+
+h2{
+    color: #2EC297;
+    font-size: 28px;
+    text-align: center;
+}
+
+h3{
+    color: #2CC295;
+    font-size: 24px;
+}
+
+hr{
+    width: 50%;
+    border: none;
+    height: 3px;
+    background: #97C6BC;
+}
+
+header h1{
+    font-family: 'Courier New', Courier, monospace;
+    color:#3cdd9a;
+}
+
+#header-title-nav{ 
+    transition: all 0.4s ease;
+    position: fixed;
+    width: 100%;
+    text-align: center;
+    margin: 0 auto;  
+    margin-top: -200px;
+    z-index: 9;
+    padding-top: 10px;
+    background-color: #aacbc464; 
+    background-color: var(--color-header);
+    backdrop-filter: blur(10px); 
+}
+
+#main-header.scrolled #header-title-nav{
+    transform: translateY(-90px);
+    background-color: var(--color-scrolled-header); 
+    backdrop-filter: blur(10px); 
+}
+
+#header-title-nav nav a {
+    border-radius: 10px; 
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+}
+
+#header-title-nav nav a:hover {
+    padding: 10px 20px;
+    border-radius: 10px; 
+    background-color: #3cdd9a; 
+    backdrop-filter: blur(10px) brightness(1.1); 
+    color: #051C1F; 
+    transform: translateY(-3px) scale(1.02); /* Léger déplacement vers le haut et agrandissement */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Ombre subtile pour un effet de "flottement" */
+}
+
+#header-logo {
+    color: #3cdd9a;
+    transform: translateX(-400px);
+    display: flex;
+    transition: transform 0.4s ease;
+    margin: 0;
+    padding: 0;
+}
+
+#main-header.scrolled #header-logo{
+    display: flex;
+    transform: translateX(10px);
+    
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 30px;
+    z-index: 20;
+    
+}
+
+body {
+    margin: 0;
+    color:#AACBC4;
+    background: var(--color-background0);
+    background-attachment: fixed;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+main {
+    margin: auto;
+    margin-top: 200px;
+
+}
+
+.main-content {
+    margin: auto;
+    padding-top: 80px;
+}
+
+div.main-content {
+    margin : 10px 45px 10px 45px; 
+}
+
+/* === MENU BURGER === */
+
+.burger-menu::before,
+.burger-menu::after,
+.burger-menu input {
+    content: "";
+    width: var(--bar-width);
+    height: var(--bar-height);
+    background-color: var(--forground);
+    transform-origin: right center;
+    transition: all var(--animation-timing), width var(--animation-timing);
+    z-index: 10;
+}
+
+.burger-menu {
+    display: flex;
+    flex-direction: column;
+    gap: var(--hamburger-gap);
+    width: max-content;
+    z-index: 10;
+    cursor: pointer;
+    width:3rem;
+}
+
+
+.burger-menu:has(input:checked)::before { /*selectionne burger-menu s'il a un input checked*/
+    rotate: -40deg;
+}
+
+.burger-menu:has(input:checked)::after { /*selectionne burger-menu s'il a un input checked*/
+    rotate: 40deg;
+}
+
+.burger-menu input {
+    appearance: none;
+    padding: 0;
+    margin:0;
+    outline: none;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.burger-menu input:checked {
+    opacity: 0;
+}
+
+.sidebar{
+    position: fixed;
+    top: 0;
+    right: 0; 
+    height: 100%;
+    width: 250px;
+    border-radius: 30px 0 0 0;
+    transform: translateX(100%); 
+    transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    margin-top: 162px;
+    z-index: 9;
+    background-color: var(--color-scrolled-header); 
+    backdrop-filter: blur(10px); 
+}
+
+.sidebar.show{
+    transform: translateX(0);
+}
+
+#main-header.scrolled .sidebar {
+    transform: translateY(-90px) translateX(100%);
+}
+
+#main-header.scrolled .sidebar.sidebar.show {
+    border-radius: 0 0 0 0;
+    transform: translateY(-90px) translateX(0);
+}
+
+.sidebar nav ul{
+    padding-top: 30px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin-left: -40px;
+}
+
+.sidebar nav li {
+    list-style: none;
+    margin: 20px;
+}
+
+.sidebar nav a {
+    font-size: 18px;
+}
+
+/* =================== */
+
+
+/* === STYLE DE L'ACCEUIL === */
+
+.hero {
+    width: 50%;
+    margin: auto;
+    margin-bottom: 40px;
+    font-size: 20px;
+}
+
+.hero p{
+    font-size: 20px;
+}
+
+.overview {
+    font-size: 20px;
+    display: flex;
+    margin-left: -45px;
+    margin-right: -45px;
+    background-color: var(--color-background2);
+    margin-top: 80px
+}
+
+.overview div {
+    margin: 20px;
+    margin-left: 80px;
+    box-shadow: 5px 5px var(--color-background1);
+}
+
+.overview p {
+    font-size: 20px;
+    margin-bottom: 40px;
+    width: 70%;
+    text-justify: auto;
+}
+
+.overview h2{
+    margin-bottom: 50px;
+    text-align: left;
+}
+
+.overview div ul li{
+    list-style: none;
+    margin-top: 20px;
+}
+
+.overview img {
+    width: 50%;
+    height: 50%;
+    margin: auto;
+}
+
+.acceuil-bottom {
+    margin-left: -45px;
+    margin-right: -45px;
+    margin-top: 0px;
+    padding: 100px 0;
+    background: var(--color-background3);
+}
+
+.acceuil-bottom .featured-tech, 
+.acceuil-bottom .cta {
+    margin: 0 auto;
+    width: 60%;
+}
+
+.acceuil-bottom .featured-tech {
+    margin: 0 auto;
+    width: 30%;
+}
+
+.acceuil-bottom .featured-tech p, 
+.acceuil-bottom .featured-tech a{
+    margin-left: 30px;
+}
+
+.acceuil-bottom .featured-tech h2,
+.acceuil-bottom .cta h2 {
+    font-size: 30px;
+    color: var(--color-acc-green1);
+}
+
+.acceuil-bottom .featured-tech h3,
+.acceuil-bottom .cta h3 {
+    font-size: 30px;
+    color: var(--color-acc-green0);
+}
+
+.acceuil-bottom .cta {
+    margin-top: 100px;
+    background: var(--color-background0);
+    padding: 40px 0;
+    border-radius: 30px;
+    text-align: center;
+ }
+
+
+
+
+
+section.intro {
+    flex-direction: row;
+    align-items: center;
+    width: 65%;
+    margin: auto;
+    text-align: justify;
+
+}
+
+section.founder{
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 65%;
+    text-align: justify;
+}
+
+.founder-text {
+    margin-left: 30px;
+    margin-right: 20px;
+}
+
+.founder-photo {
+    flex-shrink: 0;      /* Empêche l’image de se rétrécir */
+    margin-top: 10px;
+    margin-left: 10px;
+    width: 120px;
+    height: 120px; /* Hauteur = largeur pour un cercle parfait */
+    object-fit: cover; /* Assure que l'image garde une bonne apparence sans déformation */
+    border-radius: 50%; /* Crée une forme ronde */
+}
+
+p {
+    font-size: 18px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Styles pour le conteneur des boutons */
+div#button-square {
+    display: flex;
+    justify-content: center;
+    margin: auto;
+    padding: auto;
+    max-width: 300px;
+    max-height: 300px;
+    gap: 20%;
+}
+
+div#button-square button{
+    font-size: 20px;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+    color: var(--color-background1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+div#button-square button:hover {
+    background-color: #97C6BC;
+}
+
+/***************** Styles communs pour tableaux d'urgence et sections de mise en avant **********************/
+
+
+.selected-button {
+    background-color: var(--color-acc-green1);
+    color: #051c1f;
+    border: 1px solid #00DF82;
+    z-index: 5;
+}
+
+.selected-button:hover {
+    background-color: var(--color-acc-green1);
+}
+
+.data-section {
+    display: none;
+    width: 70%;
+    margin: 0 auto;
+
+}
+
+.data-section, .form-section {
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #07322a;      
+    border: 2px solid #00DF82;   
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 223, 130, 0.2);
+    color: #AACBC4;                  
+}
+
+#main-content-emergency {
+    padding-bottom: 100px;
+}
+
+.data-section h2, .form-section h2 {
+    color: #00DF82;                  
+    text-align: center;
+    margin-bottom: 15px;
+    font-family: 'Open Sans', sans-serif;
+}
+
+/* Style global des tableaux */
+.data-table {
+    width: 100%;
+    margin: auto;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-family: 'Open Sans', sans-serif;
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+/* En-tête avec couleur d’accent */
+.data-table thead {
+    background: #2EC297;          
+    color: #051c1f;                  
+}
+.data-table thead th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-bottom: 2px solid #00DF82;
+}
+
+/* Corps du tableau : lignes alternées */
+.data-table tbody tr:nth-child(odd) {
+    background: #e6f7f1;             
+}
+.data-table tbody tr:nth-child(even) {
+    background: #ffffff;
+}
+.data-table tbody td {
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    color: #333333;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+/* Suppression de la bordure sur la dernière ligne */
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Hover sur les lignes pour plus d’interactivité */
+.data-table tbody tr:hover {
+    background: rgba(46, 194, 151, 0.1);
+}
+
+.data-section p {
+    text-align: center;
+    margin-top: 15px;
+    font-weight: bold;
+    color: #00DF82;
+}
+
+/****************** Styles pour le formulaire de la newsletter **********************/
+
+#contact-section {
+    width: 65%;
+    margin: auto;
+    margin-bottom: 100px;
+}
+
+.form-section label {
+    display: block;
+    margin-bottom: 6px;
+    color: #00DF82;                
+    font-weight: bold;
+    font-size: 16px;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.form-section {
+    margin: auto;
+    width: 65%;
+}
+
+.form-element {
+    margin-bottom: 20px;
+}
+
+.form-section input[type="text"],
+.form-section input[type="email"],
+.form-section input[type="date"] {
+    width: 80%;
+    padding: 10px;
+    border: 1px solid #2EC297;      
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: #0b352e;       
+    color: #AACBC4;                 
+    font-family: 'Open Sans', sans-serif;
+    transition: border 0.3s ease;
+}
+
+.form-section input:focus {
+    border-color: #00DF82;          
+    outline: none;
+    background-color: #0f3f38;
+}
+
+/* Checkboxes */
+.form-section input[type="checkbox"] {
+    margin-right: 10px;
+    transform: scale(1.3);
+    accent-color: #00DF82;
+}
+
+.checkbox-item {
+    margin: 20px 0;
+    display: flex;
+    margin-left: 40px;
+}
+
+.checkbox-item input{
+    
+    color: var(--color-background0);
+}
+
+/* Bouton envoyer */
+.form-section button[type="submit"] {
+    display: block;
+    margin: 30px auto 0;
+    padding: 12px 28px;
+    background-color: #00DF82;       
+    color: #051c1f;                 
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: 'Open Sans', sans-serif;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.form-section button[type="submit"]:hover {
+    background-color: #2EC297;       
+}
+
+
+/************************STYLES POUR LES CARTES D'INNOVATION************************/
+
+.innovation-cards {
+  position: relative;
+  width: 100%;
+  max-width: 1200px; 
+  height: 600px;     
+  margin: 0 auto;
+  display: flex;
+  gap: 10%;
+  margin-bottom: 100px;
+  text-align: justify;
+}
+
+.innovation-item {
+    margin: auto;
+}
+
+.innovation-item {
+  width: 30%;       
+  max-width: 300px;
+  background: var(--color-background1);
+  box-shadow: 0 2px 8px var(--color-acc-green1);
+  border-radius: 8px;
+  overflow: hidden;
+  text-align: center;
+}
+
+#biorecyclage-item {
+    margin-top: 60px;
+}
+
+/* Styles d’image et de texte à l’intérieur */
+.innovation-photo {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.innovation-item h3 {
+  margin: 0.5rem 0;
+  margin-top: 20px;
+  font-size: 1.2rem;
+}
+.innovation-item p {
+  padding: 0 0.5rem 1rem;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  text-align: justify;
+  width: 80%;
+  margin: auto;
+}
+.innovation-item a {
+  display: inline-block;
+  margin-bottom: 1rem;
+  text-decoration: none;
+}
+
+
+

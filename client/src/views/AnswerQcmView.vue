@@ -68,4 +68,5 @@ export default {
 main { padding: 1rem; }
 .question { margin-bottom: 1rem; }
 button { margin-top: 1rem; }
+@import '../assets/answer.css';
 </style>

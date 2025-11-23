@@ -91,4 +91,5 @@ export default {
 .pdf-selector { margin-top: 1rem; }
 #download-button { margin-top: 0.5rem; }
 iframe#pdf-viewer { width: 100%; height: 800px; border: none; margin-top: 1rem; }
+@import '../assets/lessons.css';
 </style>

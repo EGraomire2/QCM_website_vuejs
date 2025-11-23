@@ -57,4 +57,5 @@ export default {
 <style scoped>
 /* styles spécifiques courts si besoin */
 main { padding: 1rem; }
+@import '../assets/login.css';
 </style>

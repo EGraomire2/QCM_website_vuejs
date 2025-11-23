@@ -48,4 +48,5 @@ export default {
 
 <style scoped>
 main { padding: 1rem; }
+@import '../assets/login.css';
 </style>

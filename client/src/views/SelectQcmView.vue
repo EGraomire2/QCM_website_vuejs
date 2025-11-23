@@ -52,4 +52,5 @@ export default {
 main { padding: 1rem; }
 ul { list-style: none; padding: 0; }
 li { margin-bottom: 1rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; }
+@import '../assets/select-qcm.css';
 </style>

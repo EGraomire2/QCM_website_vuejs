@@ -1,10 +1,198 @@
-/* Body, main, select and common styles are in styles.css (imported globally) */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #fffbf7;
+}
 
-/* FORM */
+/* ======================= COMMON ELEMENTS ====================== */
+main {
+    background-color: #ffeace;
+    margin: 10px auto;
+    margin-top: 200px;
+    padding: 20px 20px;
+    border-radius: 25px;
+    max-width: 900px;
+}
+
+select {
+    background: #ffeace;
+    padding: 4px;
+    border-radius: 30px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 2px dotted #d64237;
+    transition: all 0.2s ease;
+    font-weight: bold;
+    color: #d64237;
+    font-size: 14px;
+    text-align: center;
+    outline: none;
+}
+
+select:hover {
+    border: 2px solid #d64237;
+}
+
+select:focus {
+    color: #db7850;
+}
+
+/* ======================= HEADER ====================== */
+header {
+    color: #ffffff;
+    padding: 10px 0;
+    text-align: center;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    transition: transform0.4s ease;
+}
+
+h1 {
+    background: linear-gradient(50deg, #db6c50 70%, #d64237);
+    color: #ffeace;
+    padding: 20px 0 50px;  /* crée un fond plus haut et bas */
+    margin-top: -10px;     /* fait "remonter" le bloc vers le haut de la page */
+    text-align: center;
+}
+
+#main-header.scrolled {
+    transform: translateY(-60px);
+}
+
+nav.nav-link ul {
+    background: #227297;
+    background: linear-gradient(20deg, #3f98c2 50%, #491acc);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    list-style: none;
+    margin: 30px auto;
+    margin-top: -50px;
+    padding: 18px 20px;
+    border-radius: 30px;
+    height: 30px; /* fixe la hauteur pour éviter les sauts */
+    max-width: 800px;
+    box-shadow: 0px 4px 10px #db7850;
+}
+
+nav.nav-link a {
+    color: #c7e9ff;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 30px;
+    display: inline-block;
+    transition: all 0.2s ease;
+}
+
+nav.nav-link a:hover {
+    color: #ffeace;
+    padding: 10px 40px; /* élargit sur le survol */
+    font-size: 20px;
+    background: linear-gradient(50deg, #db7850, #d64237);
+    border-radius: 30px;
+}
+
+button{
+    /* Ajout du display flex et alignement centré */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flash-message {
+    background-color: #f9c2c2;
+    color: #721c24;
+    padding: 10px;
+    margin: 20px auto;
+    border-radius: 5px;
+    width: 80%;
+    text-align: center;
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    overflow: hidden;
+}
+
+.test {
+    text-decoration: underline;
+    color: blueviolet;
+    background-color: black;
+    font-weight: 500;
+}
+
+/* Formulaire centré avec une largeur maximale */
+form {
+    background: #ffffff;
+    padding: 30px; /* Plus de padding pour aérer */
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 900px;
+    margin: 30px auto;
+}
+
+form input[type="text"],
+form textarea {
+    width: 60%;
+    padding: 12px;
+    margin: 15px auto; /* Centrage horizontal */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fefefe;
+    display: block; /* Pour que margin auto fonctionne */
+}
+
+form input.question-input {
+    font-size: 16px;
+    font-weight: bold;
+    width: 60%;
+    display: block;
+    margin: 15px auto;
+}
+
+form input[type="submit"],
+form button {
+    background: #35424a;
+    color: #ffffff;
+    border: none;
+    padding: 12px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 15px;
+    margin-left: 10px;
+    margin-right: 10px; /* Espace au-dessus du bouton */
+}
+
+form input[type="submit"]:hover,
+form button:hover {
+    background: #45a049;
+}
+
+.qcm-header {
+    background-color: #f1efef;
+    margin-bottom: 10px;
+    padding: 5px 0px 20px 40px;
+    border-radius: 3px;
+    border: 1px solid #a0a0a0;
+}
+
+.qcm-header > div {
+    padding-top: 10px;   
+}
 
 /*=== HEADER ===*/
 
-.div-header {
+div.qcm-header {
     color: #d64237;
     font-weight: 550;
     font-size: 16px;
@@ -39,7 +227,7 @@ div.qcm-name-div {
     margin-top: 14px;
     margin-bottom: 8px;
     border: 3px dashed #d64237;
-    width: 85%;
+    width: 60%;
     outline: none;
     transition: all 0.2s ease;
     font-weight: bold;
@@ -58,15 +246,36 @@ div.qcm-name-div {
     transform: scale(1.05);
 }
 
-.div-header p {
+.qcm-header p {
     font-size: 14px;
     text-align: center;
 }
 
-/* select styles are in styles.css */
+.qcm-header select {
+    background: #ffeace;
+    padding: 4px;
+    border-radius: 30px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 2px dotted #d64237;
+    transition: all 0.2s ease;
+    font-weight: bold;
+    color:#d64237;
+    font-size: 14px;
+    text-align: center;
+    outline: none;
+}
+
+.qcm-header select:hover {
+    border: 2px solid #d64237;
+}
+
+.qcm-header select:focus {
+    color: #db7850;
+}
 
 /* animation des liens */
-.div-header a {
+.qcm-header a {
     position: relative;
     text-decoration: none;
     background: linear-gradient(20deg, #3f98c2 50%, #491acc);
@@ -76,7 +285,7 @@ div.qcm-name-div {
     text-decoration: none;
 }
 
-.div-header a::after {
+.qcm-header a::after {
     content: '';
     position: absolute;
     left: 0;
@@ -87,13 +296,13 @@ div.qcm-name-div {
     transition: width 0.3s ease;
 }
 
-.div-header a:hover::after {
+.qcm-header a:hover::after {
     width: 100%;
 }
 
 /*=== QUESTIONS ===*/
 
-.div-body {
+.form-container {
     color: #5057b8;
     font-weight: 550;
     font-size: 16px;
@@ -108,7 +317,7 @@ div.qcm-name-div {
     transition: all 0.2s ease;
 }
 
-.div-body button{
+.form-container button{
     display: inline-block;
     font-weight: bold;
     color:#fcf3e8;
@@ -120,7 +329,7 @@ div.qcm-name-div {
     margin-top: 0; /* Pas d'espace pour ce bouton */
 }
 
-.div-body button:hover {
+.form-container button:hover {
     background: #a04945;
 }
 
@@ -141,7 +350,7 @@ div.question-field {
     border-radius: 30px;
     margin: 10px auto;
     border: 3px dashed #5057b8;
-    width: 85%;
+    width: 60%;
     height: 30px;
     outline: none;
     transition: all 0.2s ease;
@@ -176,8 +385,8 @@ div.answers {
     margin-bottom: 30px;
 }
 
-.answers input {
-    display: inline-block !important;
+.answer input {
+    display: inline-block;
     background: #ffeace;
     padding: 4px;
     border-radius: 30px;
@@ -192,14 +401,14 @@ div.answers {
     font-size: 14px;
     text-align: left;
     outline: none;
-    position: relative;
+    position: relative; /* <<< ajouté ici */
 }
 
-.answers input:hover {
+.answer input:hover {
     border: 2px solid #d64237;
 }
 
-.answers input:focus {
+.answer input:focus {
     outline: 3px solid #d64237; /* couleur personnalisée */
     outline-offset: -3px; /* optionnel : décolle un peu l’outline du champ */
     transform: scale(1.05);
@@ -368,38 +577,28 @@ div.points-fields {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    white-space: nowrap;
-}
+  }
+  
 
 .points {
+    
+    margin: 10px;
+    margin-left: 10px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    min-width: 100px; /* ou une largeur fixe pour bien aligner */
 }
 
 .points span {
-    min-width: 40px;
-    text-align: center;
-    font-size: 18px;
-    font-weight: bold;
-    padding: 5px 10px;
-    background: white;
-    border-radius: 8px;
-}
+    width: 30px;  /* Largeur fixe pour l'élément contenant la valeur */
+    text-align: center;  /* Assure que le texte est bien centré dans l'élément */
+  }
 
 .points button {
     width: 30px;
     height: 30px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    line-height: 1;
-    padding: 0;
-    flex-shrink: 0;
-    margin-top: 0;
-    vertical-align: middle;
+    border-radius: 10px;
 }
 
 
@@ -455,37 +654,33 @@ div.buttons {
 .difficulty-field {
     font-family: Arial, Helvetica, sans-serif;
     background: #fcf3e8;
-    padding: 20px 30px;
+    padding-left: 8px;
+    padding-right: 8px;
     border-radius: 30px;
     margin: auto auto;
     border: 2px solid #db7850;
     transition: all 0.2s ease;
     font-weight: bold;
     color:#d64237;
-    font-size: 16px;
+    font-size: 14px;
+    text-align: center;
     outline: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    white-space: nowrap;
-    min-width: 280px;
 }
 
 .difficulty-field select {
     background: #ffeace;
-    padding: 10px 15px;
+    padding: 4px;
     border-radius: 30px;
-    margin: 0;
+    margin-top: 10px;
+    margin-bottom: 10px;
     border: 2px dotted #d64237;
     transition: all 0.2s ease;
     font-weight: bold;
     color:#d64237;
-    font-size: 15px;
+    font-size: 14px;
     text-align: center;
     outline: none;
-    min-width: 140px;
-    flex-shrink: 0;
+    
 }
 
 .difficulty-field select:hover {
@@ -510,3 +705,160 @@ div.buttons > :nth-child(2) {
     justify-content: center; /* centré horizontalement si besoin */
 }
 
+
+    padding-top: 10px;   
+}
+
+/* Séparation entre chaque formulaire de question */
+.form-container {
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #f8f7f4;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.remove-answer {
+    background: #491212;
+    padding: 10px 10px;
+    cursor: pointer;
+    border-radius: 10px;
+    margin-top: 0; /* Pas d'espace pour ce bouton */
+}
+
+.remove-answer:hover {
+    background: #a04945;
+}
+
+/* Style pour le point cliquable devant chaque réponse */
+.answer {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espace entre le point et le champ de réponse */
+    margin-bottom: 15px; /* Espacement vertical entre les réponses */
+}
+
+.answer-dot {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    border: 3px solid #8e0909;
+    border-radius: 30%;
+    cursor: pointer;
+    background-color: #ff0000;
+    transition: background 0.3s ease;
+}
+
+.answer-dot.correct {
+    background-color: #4CAF50;
+    border-color: #559548;;
+}
+
+.explanation-field {
+    display: flex;
+    flex-direction: column;
+    background-color: #feedb9;
+    margin: 15px;
+    text-align: center;
+  }
+  
+.explanation-field > textarea {
+    width: 100%;
+    min-height: 60px;
+    padding: 8px;
+    border: 1px solid #87c8e7;
+    border-radius: 4px;
+    resize: vertical; /* l’utilisateur ne peut redimensionner qu’en hauteur */
+  }
+
+/* Style pour l'interrupteur */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 28px;
+    margin: 10px 0;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 28px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 24px;
+    width: 24px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+    transform: translateX(30px);
+}
+
+/* Conteneur pour le toggle switch */
+.toggle-switch-container {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Espacement entre l’interrupteur et le texte */
+    margin: 20px 0;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .container {
+        width: 95%;
+    }
+
+    form {
+        padding: 20px; /* Réduction du padding sur petits écrans */
+    }
+
+    .answer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* Points-fields styles are in create-qcm.css (page-specific) */
+  
+  #forms-body .difficulty-field {
+    display: flex;
+    max-width: 150px;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 30px;
+    margin-left: 10px;
+  }
+  
+ /* Correction */
+ div .true{
+    background-color: #8cffc0;
+ }
+
+ div .false{
+    background-color: #fa8888;
+ }
+ 

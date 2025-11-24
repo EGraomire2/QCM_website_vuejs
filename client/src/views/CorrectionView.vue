@@ -46,7 +46,7 @@
       </div>
 
       <!-- Back button -->
-      <div class="div-body">
+      <div class="div-body back-button-container">
         <button @click="backToList">Retour à la liste des QCM</button>
       </div>
     </main>

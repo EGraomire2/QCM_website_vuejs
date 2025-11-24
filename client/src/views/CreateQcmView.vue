@@ -275,9 +275,9 @@ export default {
     async loadSubjects() {
       try {
         const response = await api.get('/api/subjects');
-        this.subjects = response.data.map(s => ({
-          id: s.ID_Subject,
-          name: s.Subject_name
+        this.subjects = response.data.subjects.map(s => ({
+          id: s.id,
+          name: s.name
         }));
       } catch (error) {
         console.error('Error loading subjects:', error);
@@ -287,10 +287,10 @@ export default {
     async loadChapters() {
       try {
         const response = await api.get('/api/chapters');
-        this.chapters = response.data.map(ch => ({
-          id: ch.ID_Chapter,
-          name: ch.Chapter_name,
-          subjectId: ch.ID_Subject
+        this.chapters = response.data.chapters.map(ch => ({
+          id: ch.id,
+          name: ch.name,
+          subjectId: ch.subjectId
         }));
       } catch (error) {
         console.error('Error loading chapters:', error);

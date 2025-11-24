@@ -43,7 +43,8 @@ CREATE TABLE Question (
     Number_of_points INT NOT NULL,
     Type_of_question VARCHAR(500) NOT NULL,
     Negative_points FLOAT DEFAULT 0,
-    ID_QCM INT NOT NULL
+    ID_QCM INT NOT NULL,
+    Explanation VARCHAR(1000)
 );
 
 -- Table Reponse_possible

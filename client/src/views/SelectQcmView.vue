@@ -76,7 +76,7 @@
             <button 
               v-if="getAttemptForQcm(qcm.id)" 
               @click="viewCorrection(qcm.id, getAttemptForQcm(qcm.id).id)"
-              style="margin-left: 10px; background: linear-gradient(50deg, #3f98c2, #491acc);"
+              style="margin-left: 45px !important; background: linear-gradient(50deg, #3f98c2, #491acc);"
             >
               Voir la correction
             </button>

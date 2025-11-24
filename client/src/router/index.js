@@ -7,6 +7,7 @@ import SelectQcmView from '@/views/SelectQcmView.vue'
 import AnswerQcmView from '@/views/AnswerQcmView.vue'
 import CorrectionView from '@/views/CorrectionView.vue'
 import LessonsView from '@/views/LessonsView.vue'
+import CreateSubjectView from '@/views/CreateSubjectView.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useNotificationStore } from '@/stores/notification'
 
@@ -54,6 +55,12 @@ const routes = [
     path: '/lessons', 
     name: 'Lessons', 
     component: LessonsView 
+  },
+  { 
+    path: '/subjects/create', 
+    name: 'CreateSubject', 
+    component: CreateSubjectView,
+    meta: { requiresAuth: true, requiresTeacher: true }
   }
 ]
 

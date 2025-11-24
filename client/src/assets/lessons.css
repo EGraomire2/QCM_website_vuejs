@@ -1,72 +1,7 @@
+/* Body and common styles are in styles.css (imported globally) */
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #fffbf7;
-    text-align: center;
-}
-
-/* ======================= HEADER ====================== */
-header {
-    color: #ffffff;
-    padding: 10px 0;
-    text-align: center;
-}
-
-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    transition: transform 0.4s ease;
-}
-
-h1 {
-    background: linear-gradient(50deg, #db6c50 70%, #d64237);
-    color: #ffeace;
-    padding: 20px 0 50px;  /* crée un fond plus haut et bas */
-    margin-top: -10px;     /* fait "remonter" le bloc vers le haut de la page */
-    text-align: center;
-}
-
-#main-header.scrolled {
-    transform: translateY(-60px);
-}
-
-nav.nav-link ul {
-    background: #227297;
-    background: linear-gradient(20deg, #3f98c2 50%, #491acc);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    list-style: none;
-    margin: 30px auto;
-    margin-top: -50px;
-    padding: 18px 20px;
-    border-radius: 30px;
-    height: 30px; /* fixe la hauteur pour éviter les sauts */
-    max-width: 800px;
-    box-shadow: 0px 4px 10px #db7850;
-}
-
-nav.nav-link a {
-    color: #c7e9ff;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: bold;
-    padding: 10px 20px;
-    border-radius: 30px;
-    display: inline-block;
-    transition: all 0.2s ease;
-}
-
-nav.nav-link a:hover {
-    color: #ffeace;
-    padding: 10px 40px; /* élargit sur le survol */
-    font-size: 20px;
-    background: linear-gradient(50deg, #db7850, #d64237);
-    border-radius: 30px;
+    text-align: center; /* Specific to lessons page */
 }
 
 /* =============== PDF ===============*/
@@ -107,29 +42,7 @@ nav.nav-link a:hover {
     max-width: 900px;
 }
 
-select {
-    background: #ffeace;
-    padding: 4px;
-    border-radius: 30px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    border: 2px dotted #d64237;
-    transition: all 0.2s ease;
-    font-weight: bold;
-    color:#d64237;
-    font-size: 14px;
-    text-align: center;
-    outline: none;
-    
-}
-
-select:hover {
-    border: 2px solid #d64237;
-}
-
-select:focus {
-    color: #db7850;
-}
+/* select styles are in styles.css */
 
 /* Bouton Télécharger */
 button{

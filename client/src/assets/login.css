@@ -1,9 +1,4 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #fffbf7;
-}
+/* Body and common styles are in styles.css (imported globally) */
 
 .flash-message {
     margin: auto;
@@ -90,7 +85,7 @@ h2 {
 }
 
 
-a {
+.inputBox a {
     position: relative;
     text-decoration: none;
     background: linear-gradient(20deg, #3f98c2 50%, #491acc);
@@ -100,7 +95,7 @@ a {
     text-decoration: none;
 }
 
-a::after {
+.inputBox a::after {
     content: '';
     position: absolute;
     left: 0;
@@ -111,6 +106,6 @@ a::after {
     transition: width 0.3s ease;
 }
 
-a:hover::after {
+.inputBox a:hover::after {
     width: 100%;
 }

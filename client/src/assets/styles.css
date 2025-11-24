@@ -5,6 +5,39 @@ body {
     background: #fffbf7;
 }
 
+/* ======================= COMMON ELEMENTS ====================== */
+main {
+    background-color: #ffeace;
+    margin: 10px auto;
+    margin-top: 200px;
+    padding: 20px 20px;
+    border-radius: 25px;
+    max-width: 900px;
+}
+
+select {
+    background: #ffeace;
+    padding: 4px;
+    border-radius: 30px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 2px dotted #d64237;
+    transition: all 0.2s ease;
+    font-weight: bold;
+    color: #d64237;
+    font-size: 14px;
+    text-align: center;
+    outline: none;
+}
+
+select:hover {
+    border: 2px solid #d64237;
+}
+
+select:focus {
+    color: #db7850;
+}
+
 /* ======================= HEADER ====================== */
 header {
     color: #ffffff;

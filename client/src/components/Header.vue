@@ -54,7 +54,6 @@ export default {
 };
 </script>
 
-<style scoped>
-/* Styles are inherited from global styles.css */
-/* Additional component-specific styles can be added here if needed */
+<style>
+/* Styles are in client/src/assets/styles.css (imported globally in main.js) */
 </style>

@@ -1,61 +1,163 @@
 <template>
-  <div>
-    <header id="main-header">
-      <h1 class="main_title">Créer un compte</h1>
-      <nav class="nav-link">
-        <ul>
-          <li><a href="index.html">Accueil</a></li>
-          <li><a href="login.html">Connexion</a></li>
-          <li><a href="select-qcm.html">Liste de QCM</a></li>
-          <li><a href="lessons.html">Notions de cours</a></li>
-        </ul>
-      </nav>
-    </header>
+  <div class="container">
+    <form id="register-form" @submit.prevent="handleSubmit">
+      <h2>S'inscrire :</h2>
 
-    <main>
-      <form id="register-form" @submit.prevent="submit">
-        <div>
-          <label for="username">Nom d'utilisateur</label>
-          <input id="username" v-model="form.username" type="text" required />
-        </div>
-        <div>
-          <label for="email">E-mail</label>
-          <input id="email" v-model="form.email" type="email" required />
-        </div>
-        <div>
-          <label for="password">Mot de passe</label>
-          <input id="password" v-model="form.password" type="password" required />
-        </div>
-        <button type="submit">Créer</button>
-      </form>
-    </main>
+      <div class="inputBox">
+        <input
+          type="text"
+          name="username"
+          placeholder="Nom d'utilisateur"
+          v-model="form.username"
+          required
+          :disabled="isLoading"
+        >
+      </div>
+
+      <div class="inputBox">
+        <input
+          type="email"
+          name="email"
+          placeholder="Adresse e-mail"
+          v-model="form.email"
+          required
+          :disabled="isLoading"
+        >
+      </div>
+
+      <div class="inputBox">
+        <input
+          type="password"
+          name="password1"
+          placeholder="Mot de passe"
+          v-model="form.password1"
+          required
+          minlength="6"
+          :disabled="isLoading"
+        >
+      </div>
+
+      <div class="inputBox">
+        <input
+          type="password"
+          name="password2"
+          placeholder="Confirmer le mot de passe"
+          v-model="form.password2"
+          required
+          minlength="6"
+          :disabled="isLoading"
+        >
+      </div>
+
+      <div class="inputBox">
+        <input 
+          type="submit" 
+          name="inscription" 
+          :value="isLoading ? 'Inscription...' : 'S\'inscrire'"
+          :disabled="isLoading"
+        >
+      </div>
+
+      <div class="inputBox">
+        <p>Déjà un compte ?
+          <router-link to="/login">Connectez-vous</router-link>
+        </p>
+      </div>
+    </form>
   </div>
 </template>
 
 <script>
-// filepath: c:\Users\etien\Documents\GitHub\QCM_website_vuejs\client\src\views\Register.vue
-import '@/assets/create-qcm.css';
+import { useAuthStore } from '@/stores/auth'
+import { useNotificationStore } from '@/stores/notification'
+import { useRouter } from 'vue-router'
 
 export default {
   name: 'RegisterView',
+
+  setup() {
+    const authStore = useAuthStore()
+    const notificationStore = useNotificationStore()
+    const router = useRouter()
+
+    return {
+      authStore,
+      notificationStore,
+      router
+    }
+  },
+
   data() {
     return {
-      form: { username: '', email: '', password: '' }
-    };
+      form: {
+        username: '',
+        email: '',
+        password1: '',
+        password2: ''
+      },
+      isLoading: false
+    }
   },
+
   methods: {
-    submit() {
-      // placeholder : la logique serveur/auth est ignorée pour le portage de template
-      console.log('register (client only):', this.form);
-      // redirection simple vers login ou liste QCM
-      window.location.href = 'login.html';
+    validateForm() {
+      // Validation du nom d'utilisateur
+      if (!this.form.username || this.form.username.trim().length < 3) {
+        this.notificationStore.showError('Le nom d\'utilisateur doit contenir au moins 3 caractères.')
+        return false
+      }
+
+      // Validation de l'email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(this.form.email)) {
+        this.notificationStore.showError('Veuillez entrer une adresse e-mail valide.')
+        return false
+      }
+
+      // Validation de la longueur du mot de passe
+      if (this.form.password1.length < 6) {
+        this.notificationStore.showError('Le mot de passe doit contenir au moins 6 caractères.')
+        return false
+      }
+
+      // Validation de la correspondance des mots de passe
+      if (this.form.password1 !== this.form.password2) {
+        this.notificationStore.showError('Les mots de passe ne correspondent pas.')
+        return false
+      }
+
+      return true
+    },
+
+    async handleSubmit() {
+      // Validation côté client
+      if (!this.validateForm()) {
+        return
+      }
+
+      this.isLoading = true
+
+      try {
+        const result = await this.authStore.register(
+          this.form.username,
+          this.form.email,
+          this.form.password1
+        )
+
+        if (result.success) {
+          // Redirection vers la page de connexion après inscription réussie
+          this.router.push('/login')
+        }
+      } catch (error) {
+        console.error('Erreur lors de l\'inscription:', error)
+      } finally {
+        this.isLoading = false
+      }
     }
   }
-};
+}
 </script>
 
 <style scoped>
-/* styles spécifiques courts si besoin */
-main { padding: 1rem; }
 @import '../assets/login.css';
 </style>

@@ -1,41 +1,33 @@
 <template>
   <div>
-    <header id="main-header">
-      <h1 class="main_title">Fiches de révisions</h1>
-      <nav class="nav-link">
-        <ul>
-          <!-- Liens statiques (auth désactivée / ignorée) -->
-          <li><a href="register.html">Créer un compte</a></li>
-          <li><a href="login.html">Connexion</a></li>
-          <li><a href="index.html">Accueil</a></li>
-          <li><a href="create-qcm.html">Créer un QCM</a></li>
-          <li><a href="select-qcm.html">Liste de QCM</a></li>
-          <li><a href="lessons.html">Notions de cours</a></li>
-        </ul>
-      </nav>
-    </header>
+    <Header />
 
     <main id="pdf">
       <h2 id="pdf-title">{{ pdfTitle }}</h2>
 
       <div class="pdf-selector">
         <label for="pdf-select">Choisissez votre fiche de révisions :</label>
-        <select id="pdf-select" v-model="selectedPdf" @change="onChange">
+        <select id="pdf-select" v-model="selectedPdf" @change="onPdfChange">
           <option value="">-- Sélectionner un PDF --</option>
           <option v-for="opt in pdfOptions" :key="opt.path" :value="opt.path">{{ opt.label }}</option>
         </select>
       </div>
 
-      <button id="download-button" v-show="selectedPdf" @click="downloadPdf">Télécharger</button>
+      <button id="download-button" v-if="selectedPdf" @click="downloadPdf">Télécharger</button>
 
-      <iframe id="pdf-viewer" v-show="selectedPdf" :src="iframeSrc"></iframe>
+      <iframe id="pdf-viewer" v-if="selectedPdf" :src="iframeSrc"></iframe>
     </main>
   </div>
 </template>
 
 <script>
+import Header from '@/components/Header.vue';
+
 export default {
   name: 'LessonsView',
+  components: {
+    Header
+  },
   data() {
     return {
       selectedPdf: '',
@@ -56,40 +48,31 @@ export default {
     };
   },
   methods: {
-    onChange() {
+    onPdfChange() {
       if (this.selectedPdf) {
+        // Set the iframe source to display the PDF
         this.iframeSrc = this.selectedPdf;
-        const opt = this.pdfOptions.find(o => o.path === this.selectedPdf);
-        this.pdfTitle = opt ? opt.label : '';
+        
+        // Update the title with the selected PDF label
+        const selectedOption = this.pdfOptions.find(opt => opt.path === this.selectedPdf);
+        this.pdfTitle = selectedOption ? selectedOption.label : '';
       } else {
+        // Clear the iframe and title when no PDF is selected
         this.iframeSrc = '';
         this.pdfTitle = '';
       }
     },
     downloadPdf() {
       if (this.selectedPdf) {
+        // Open the PDF in a new tab for download
         window.open(this.selectedPdf, '_blank');
       }
-    }
-  },
-  mounted() {
-    // injecte le css existant (conserve /css/lessons.css tel quel)
-    const href = '/css/lessons.css';
-    if (!document.querySelector(`link[href="${href}"]`)) {
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = href;
-      document.head.appendChild(link);
     }
   }
 };
 </script>
 
-<style scoped>
-/* styles de base pour garder un rendu proche de l'original */
-#pdf { padding: 1rem; }
-.pdf-selector { margin-top: 1rem; }
-#download-button { margin-top: 0.5rem; }
-iframe#pdf-viewer { width: 100%; height: 800px; border: none; margin-top: 1rem; }
+<style>
+/* Import existing lessons.css for consistent styling */
 @import '../assets/lessons.css';
 </style>

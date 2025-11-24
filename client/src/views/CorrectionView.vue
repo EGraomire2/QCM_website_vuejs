@@ -1,59 +1,178 @@
 <template>
   <div>
-    <header id="main-header">
-      <h1 class="main_title">Correction</h1>
-      <nav class="nav-link">
-        <ul>
-          <li><a href="index.html">Accueil</a></li>
-          <li><a href="select-qcm.html">Liste de QCM</a></li>
-          <li><a href="lessons.html">Notions de cours</a></li>
-        </ul>
-      </nav>
-    </header>
+    <Header />
 
-    <main>
-      <section>
-        <h2>Correction du QCM</h2>
-        <ul>
-          <li v-for="(c, idx) in corrections" :key="idx">
-            <p><strong>Q{{ idx + 1 }}.</strong> {{ c.question }}</p>
-            <p>Votre réponse : <em>{{ c.your }}</em></p>
-            <p>Réponse correcte : <strong>{{ c.correct }}</strong></p>
-          </li>
-        </ul>
+    <main v-if="!loading && correctionData">
+      <!-- QCM Header Information -->
+      <div class="div-header">
+        <h2>Correction : {{ correctionData.qcm.name }}</h2>
+        <p>Difficulté : {{ getDifficultyLabel(correctionData.qcm.difficulty) }}</p>
+        <p>Note obtenue : <strong>{{ correctionData.attempt.grade.toFixed(2) }} / 20</strong></p>
+        <p>Date : {{ formatDate(correctionData.attempt.date) }}</p>
+      </div>
 
-        <button @click="backToList">Retour à la liste</button>
-      </section>
+      <!-- Questions and Answers -->
+      <div v-for="(question, index) in correctionData.questions" :key="question.id" class="div-body">
+        <h3>Question {{ index + 1 }}</h3>
+        <p><strong>{{ question.heading }}</strong></p>
+        <p>Type : {{ question.type === 'unique' ? 'Choix unique' : 'Choix multiple' }}</p>
+        <p>Points : {{ question.points }} | Points négatifs : {{ question.negativePoints }}</p>
+
+        <!-- Propositions -->
+        <div class="answers">
+          <div 
+            v-for="proposition in question.propositions" 
+            :key="proposition.id"
+            :class="getPropositionClass(proposition, question.userAnswers)"
+          >
+            <span 
+              class="answer-dot" 
+              :class="{ 'correct': proposition.validity }"
+            ></span>
+            <span>{{ proposition.proposition }}</span>
+            <span v-if="isUserAnswer(proposition.id, question.userAnswers)"> ← Votre réponse</span>
+          </div>
+        </div>
+
+        <!-- Explanation if exists -->
+        <div v-if="question.explanation" class="explanation">
+          <strong>Explication :</strong> {{ question.explanation }}
+        </div>
+
+        <!-- Points earned for this question -->
+        <div class="points-fields">
+          <p><strong>Points obtenus : {{ question.pointsEarned }} / {{ question.points }}</strong></p>
+        </div>
+      </div>
+
+      <!-- Back button -->
+      <div class="div-body">
+        <button @click="backToList">Retour à la liste des QCM</button>
+      </div>
+    </main>
+
+    <main v-else-if="loading">
+      <div class="div-header">
+        <p>Chargement de la correction...</p>
+      </div>
+    </main>
+
+    <main v-else-if="error">
+      <div class="div-header">
+        <p style="color: red;">{{ error }}</p>
+        <button @click="backToList">Retour à la liste des QCM</button>
+      </div>
     </main>
   </div>
 </template>
 
 <script>
-// filepath: c:\Users\etien\Documents\GitHub\QCM_website_vuejs\client\src\views\Correction.vue
-import '@/assets/create-qcm.css';
+import Header from '@/components/Header.vue';
+import api from '@/services/api';
+import { useNotificationStore } from '@/stores/notification';
 
 export default {
-  name: 'Correction',
+  name: 'CorrectionView',
+  components: {
+    Header
+  },
   data() {
     return {
-      corrections: [
-        { question: '2+2 = ?', your: '4', correct: '4' },
-        { question: 'Capitale de la France ?', your: 'Paris', correct: 'Paris' }
-      ]
+      correctionData: null,
+      loading: true,
+      error: null
     };
   },
+  async mounted() {
+    await this.loadCorrection();
+  },
   methods: {
+    async loadCorrection() {
+      try {
+        this.loading = true;
+        this.error = null;
+
+        const qcmId = this.$route.params.qcmId;
+        const attemptId = this.$route.params.attemptId;
+
+        if (!qcmId || !attemptId) {
+          this.error = 'Paramètres manquants';
+          return;
+        }
+
+        // Fetch correction data from API
+        const response = await api.get(`/api/qcm/${qcmId}/correction/${attemptId}`);
+
+        if (response.data.success) {
+          this.correctionData = response.data;
+        } else {
+          this.error = response.data.message || 'Erreur lors du chargement de la correction';
+        }
+      } catch (err) {
+        console.error('Error loading correction:', err);
+        this.error = err.response?.data?.message || 'Erreur lors du chargement de la correction';
+        
+        const notificationStore = useNotificationStore();
+        notificationStore.showError(this.error);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    getDifficultyLabel(difficulty) {
+      const labels = {
+        0: 'Facile',
+        1: 'Moyen',
+        2: 'Difficile'
+      };
+      return labels[difficulty] || 'Inconnu';
+    },
+
+    formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('fr-FR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    },
+
+    isUserAnswer(propositionId, userAnswers) {
+      return userAnswers.includes(propositionId);
+    },
+
+    getPropositionClass(proposition, userAnswers) {
+      const isSelected = this.isUserAnswer(proposition.id, userAnswers);
+      const isCorrect = proposition.validity;
+
+      // If user selected this answer
+      if (isSelected) {
+        // If it's correct, show green background
+        if (isCorrect) {
+          return 'true';
+        }
+        // If it's incorrect, show red background
+        return 'false';
+      }
+
+      // If user didn't select but it was correct, show it's correct
+      if (isCorrect) {
+        return 'true';
+      }
+
+      // Default: no special class
+      return '';
+    },
+
     backToList() {
-      window.location.href = 'select-qcm.html';
+      this.$router.push('/qcm/select');
     }
   }
 };
 </script>
 
 <style scoped>
-main { padding: 1rem; }
-ul { list-style: none; padding: 0; }
-li { margin-bottom: 1rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; }
-button { margin-top: 1rem; }
 @import '../assets/correct.css';
 </style>

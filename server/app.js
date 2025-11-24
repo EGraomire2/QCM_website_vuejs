@@ -1,194 +1,81 @@
-const express = require('express'); 
-const app = express(); 
-const port = 3000; 
+import express from 'express';
+import bodyParser from 'body-parser';
+import dotenv from 'dotenv';
+dotenv.config();
 
-var cors = require('cors');
-var bodyParser = require('body-parser');  
-const mysql = require('mysql2'); 
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const saltRounds = 10;
-const secretKey = 'REZMT4K5LMRSTU';
+// Import configuration
+import { testConnection } from './config/database.js';
 
-app.use(cors());
-app.use(bodyParser.json()); // for parsing application/json 
+// Import middleware
+import corsMiddleware from './middleware/cors.js';
+import errorHandler from './middleware/errorHandler.js';
 
-const db = mysql.createConnection({ 
-    host: 'localhost', 
-    user: 'root', 
-    password: '', 
-    database: 'sos_prepa_bdd'
-}); 
+// Import routes
+import apiRoutes from './routes/index.js';
 
-db.connect((err) => { 
-    if (err) throw err; 
-    console.log('Connected to database'); 
-}); 
+// Initialize Express app
+const app = express();
+const port = process.env.PORT || 3000;
 
-// helper validations
-function isValidEmail(email) {
-	// simple, permissive email regex
-	return typeof email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-function isValidPassword(password) {
-	return typeof password === 'string' && password.length >= 8;
+// Middleware configuration
+app.use(corsMiddleware);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Request logging middleware (development)
+if (process.env.NODE_ENV === 'development') {
+    app.use((req, res, next) => {
+        console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+        next();
+    });
 }
 
-// Création de compte utilisateur
-app.post('/api/register', (req, res) => { 
-    const { email, password } = req.body;
+// Mount API routes
+app.use('/api', apiRoutes);
 
-    // validate input early
-    if (!email || !password) {
-        return res.status(400).json({ message: 'Email and password are required' });
-    }
-    if (!isValidEmail(email)) {
-        return res.status(400).json({ message: 'Invalid email format' });
-    }
-    if (!isValidPassword(password)) {
-        return res.status(400).json({ message: 'Password must be at least 8 characters' });
-    }
-
-    // Vérifier si l'utilisateur existe déjà
-    const sqlget = 'SELECT * FROM users WHERE Email = ?';
-    db.query(sqlget, [email], (err, result) => {
-        if (err) {
-            return res.status(500).json({ message: 'Database error' });
-        }
-        if (result.length > 0) {
-            return res.status(400).json({ message: 'Email already registered' });
-        }
-        // Hash password then insert
-        bcrypt.hash(password, saltRounds, (hashErr, hash) => {
-            if (hashErr) return res.status(500).json({ message: 'Error hashing password' });
-
-            const sql = 'INSERT INTO users (Email, password) VALUES (?, ?)';
-            db.query(sql, [email, hash], (insertErr, insertRes) => {
-                if (insertErr) return res.status(500).json({ message: 'Database error' });
-                res.status(201).json({ message: 'User registered successfully' });
-            });
-        });
+// Root endpoint
+app.get('/', (req, res) => {
+    res.json({
+        message: 'SOSprépa API Server',
+        version: '1.0.0',
+        status: 'running'
     });
 });
 
-// Connexion utilisateur
-app.post('/api/login', (req, res) => { 
-    const { email, password } = req.body;
-
-    // basic validation
-    if (!email || !password) {
-        return res.status(400).json({ message: 'Email and password are required' });
-    }
-    if (!isValidEmail(email)) {
-        return res.status(400).json({ message: 'Invalid email format' });
-    }
-    if (!isValidPassword(password)) {
-        return res.status(400).json({ message: 'Password must be at least 8 characters' });
-    }
-
-    const sql = 'SELECT * FROM users WHERE Email = ?';
-    db.query(sql, [email], (err, result) => {
-        if (err) {
-            return res.status(500).json({ message: 'Database error' });
-        }
-        if (result.length === 0) {
-            return res.status(401).json({ message: 'No account found with this email' });
-        }
-
-        const user = result[0];
-        // Utiliser bcrypt.compare de façon asynchrone
-        bcrypt.compare(password, user.password, (compErr, isMatch) => {
-            if (compErr) {
-                console.error(compErr);
-                return res.status(500).json({ message: 'Error comparing passwords' });
-            }
-            if (isMatch) {
-                // Générer un token JWT
-                const token = generateToken(user.Email || email);
-                db.query('UPDATE users SET token = ? WHERE Email = ?', [token, email], (updateErr) => {
-                    if (updateErr) {
-                        console.error('Error updating token in DB :', updateErr);
-                        // continue anyway
-                    }
-                    // Réponse uniforme : message, token, user non sensible
-                    return res.status(200).json({
-                        message: 'Login successful',
-                        token: token,
-                        user: {
-                            id: user.id,
-                            email: user.Email
-                        }
-                    });
-                });
-            } else {
-                res.status(401).json({ message: 'Incorrect password' });
-            }
-        });
+// 404 handler
+app.use((req, res) => {
+    res.status(404).json({
+        success: false,
+        message: 'Route not found'
     });
 });
 
-// Fonction de génération de token JWT
-function generateToken(email) {
-    const payload = { email }; 
-    const options = { expiresIn: '1h' }; // Token expiration time 
-    return jwt.sign(payload, secretKey, options); 
-}
+// Global error handler (must be last)
+app.use(errorHandler);
 
-// Fonction de vérification de token JWT
-function verifyToken(token) { 
-    try { 
-        const decoded = jwt.verify(token, secretKey); 
-        return decoded.email; 
-    } catch (err) { 
-        return null; // Token is invalid or expired 
-    } 
-}
+// Start server
+const startServer = async () => {
+    try {
+        // Test database connection
+        const dbConnected = await testConnection();
+        
+        if (!dbConnected) {
+            console.error('Failed to connect to database. Please check your configuration.');
+            process.exit(1);
+        }
 
-// Route: authentifier via token
-app.get('/api/authenticate', (req, res) => {
-	// lire le header Authorization (format attendu: "Bearer <token>")
-	const authHeader = req.headers.authorization || req.headers.Authorization;
-	if (!authHeader) {
-		return res.status(401).json({ message: 'Authorization header required' });
-	}
-	const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+        // Start listening
+        app.listen(port, () => {
+            console.log(`✓ Server is running at http://localhost:${port}`);
+            console.log(`✓ Environment: ${process.env.NODE_ENV || 'development'}`);
+            console.log(`✓ API endpoints available at http://localhost:${port}/api`);
+        });
+    } catch (error) {
+        console.error('Failed to start server:', error);
+        process.exit(1);
+    }
+};
 
-	// valider le token JWT et extraire l'email
-	const email = verifyToken(token);
-	if (!email) {
-		return res.status(401).json({ message: 'Invalid or expired token' });
-	}
+startServer();
 
-	// vérifier en base que l'utilisateur existe et que le token correspond à celui stocké
-	const sql = 'SELECT id, Email, token FROM users WHERE Email = ?';
-	db.query(sql, [email], (err, result) => {
-		if (err) return res.status(500).json({ message: 'Database error' });
-		if (result.length === 0) return res.status(401).json({ message: 'User not found' });
-
-		const user = result[0];
-		if (!user.token || user.token !== token) {
-			return res.status(401).json({ message: 'Token mismatch or revoked' });
-		}
-
-		// authentifié : retourner la même structure que /api/login
-		return res.status(200).json({
-			message: 'Authenticated',
-			token: token,
-			user: {
-				id: user.id,
-				email: user.Email
-			}
-		});
-	});
-});
-
-// Test du token
-
-
-app.get('/', (req, res) => { 
-    res.send('Hello World!'); 
-}); 
-
-app.listen(port, () => { 
-    console.log(`Server is running at http://localhost:${port}`); 
-});
+export default app;

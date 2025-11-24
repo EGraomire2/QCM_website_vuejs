@@ -19,18 +19,21 @@ h2 {
 #login-form, #register-form {
     background-color: #ffeace;
     margin: 10px auto;
-    margin-top: 100px;
+    margin-top: 50px;
     padding: 20px 20px ;
     border-radius: 25px;
     width: 300px;
 }
 #login-form {
-    height: 350px;
+    height: auto;
+    min-height: 350px;
 }
 #register-form {
-    height: 400px;
+    height: auto;
+    min-height: 450px;
 }
-input {
+#login-form input,
+#register-form input {
     display: block;
     background: #ffeace;
     padding: 8px;
@@ -46,17 +49,20 @@ input {
     text-align: center;
 }
 
-input:hover {
+#login-form input:hover,
+#register-form input:hover {
     border: 3px solid #d64237;
 }
 
-input:focus {
+#login-form input:focus,
+#register-form input:focus {
     outline: 5px solid #d64237; /* couleur personnalisée */
-    outline-offset: -4px; /* optionnel : décolle un peu l’outline du champ */
+    outline-offset: -4px; /* optionnel : décolle un peu l'outline du champ */
     transform: scale(1.05);
 }
 
-input[type="submit"]{
+#login-form input[type="submit"],
+#register-form input[type="submit"]{
     font-weight: bold;
     color: #c7e9ff;
     background: linear-gradient(50deg, #3f98c2 30%, #1a49cc);
@@ -72,11 +78,13 @@ input[type="submit"]{
     transition: all 0.2 ease;
 }
 
-input[type="submit"]:hover {
+#login-form input[type="submit"]:hover,
+#register-form input[type="submit"]:hover {
     background: #61619c;
 }
 
-input[type="submit"]:focus {
+#login-form input[type="submit"]:focus,
+#register-form input[type="submit"]:focus {
     border:none;
     outline: none;
 }

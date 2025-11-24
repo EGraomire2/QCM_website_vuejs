@@ -1,52 +1,104 @@
 <template>
-  <div>
-    <header id="main-header">
-      <h1 class="main_title">Connexion</h1>
-      <nav class="nav-link">
-        <ul>
-          <li><a href="index.html">Accueil</a></li>
-          <li><a href="register.html">Créer un compte</a></li>
-          <li><a href="select-qcm.html">Liste de QCM</a></li>
-        </ul>
-      </nav>
-    </header>
+  <div class="container">
+    <form id="login-form" @submit.prevent="handleSubmit">
+      <h2>S'identifier :</h2>
 
-    <main>
-      <form id="login-form" @submit.prevent="submit">
-        <div>
-          <label for="email">E-mail</label>
-          <input id="email" v-model="form.email" type="email" required />
-        </div>
-        <div>
-          <label for="password">Mot de passe</label>
-          <input id="password" v-model="form.password" type="password" required />
-        </div>
-        <button type="submit">Se connecter</button>
-      </form>
-    </main>
+      <div class="inputBox">
+        <input
+          type="email"
+          name="email"
+          placeholder="Adresse e-mail"
+          v-model="form.email"
+          required
+          :disabled="isLoading"
+        >
+      </div>
+
+      <div class="inputBox">
+        <input
+          type="password"
+          name="password"
+          placeholder="Mot de passe"
+          v-model="form.password"
+          required
+          :disabled="isLoading"
+        >
+      </div>
+
+      <div class="inputBox">
+        <input 
+          type="submit" 
+          name="connexion" 
+          :value="isLoading ? 'Connexion...' : 'Connexion'"
+          :disabled="isLoading"
+        >
+      </div>
+
+      <div class="inputBox">
+        <p>Pas encore de compte ?
+          <router-link to="/register">Inscrivez-vous</router-link>
+        </p>
+      </div>
+    </form>
   </div>
 </template>
 
 <script>
-// filepath: c:\Users\etien\Documents\GitHub\QCM_website_vuejs\client\src\views\Login.vue
-import '@/assets/create-qcm.css';
+import { useAuthStore } from '@/stores/auth'
+import { useRouter, useRoute } from 'vue-router'
 
 export default {
   name: 'LoginView',
-  data() {
-    return { form: { email: '', password: '' } };
+
+  setup() {
+    const authStore = useAuthStore()
+    const router = useRouter()
+    const route = useRoute()
+
+    return {
+      authStore,
+      router,
+      route
+    }
   },
+
+  data() {
+    return {
+      form: {
+        email: '',
+        password: ''
+      },
+      isLoading: false
+    }
+  },
+
   methods: {
-    submit() {
-      // placeholder client-only
-      console.log('login (client only):', this.form);
-      window.location.href = 'select-qcm.html';
+    async handleSubmit() {
+      // Validation côté client
+      if (!this.form.email || !this.form.password) {
+        return
+      }
+
+      this.isLoading = true
+
+      try {
+        const result = await this.authStore.login(this.form.email, this.form.password)
+
+        if (result.success) {
+          // Redirection après connexion réussie
+          const redirectPath = this.route.query.redirect || '/'
+          this.router.push(redirectPath)
+        }
+      } catch (error) {
+        console.error('Erreur lors de la connexion:', error)
+      } finally {
+        this.isLoading = false
+      }
     }
   }
-};
+}
 </script>
 
 <style scoped>
-main { padding: 1rem; }
 @import '../assets/login.css';
 </style>

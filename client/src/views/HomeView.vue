@@ -1,19 +1,7 @@
 <template>
   <div>
-    <header id="main-header">
-      <h1 class="main_title">Bienvenue sur SOSprépa</h1>
-      <nav class="nav-link">
-        <ul>
-          <!-- Liens statiques (auth désactivée / ignorée) -->
-          <li><a href="register.html">Créer un compte</a></li>
-          <li><a href="login.html">Connexion</a></li>
-          <li><a href="index.html">Accueil</a></li>
-          <li><a href="create-qcm.html">Créer un QCM</a></li>
-          <li><a href="select-qcm.html">Liste de QCM</a></li>
-          <li><a href="lessons.html">Notions de cours</a></li>
-        </ul>
-      </nav>
-    </header>
+    <!-- Integrate the Header component with dynamic navigation -->
+    <Header />
 
     <main>
       <section>
@@ -39,13 +27,27 @@
           <li>🔁 Progresse à ton rythme</li>
         </ol>
 
-        <button id="boutonaction" @click="goToSelectQcm">Passer à l'action !</button>
+        <!-- Conditional button based on authentication -->
+        <button 
+          v-if="isAuthenticated" 
+          id="boutonaction" 
+          @click="goToSelectQcm"
+        >
+          Passer à l'action !
+        </button>
+        <button 
+          v-else 
+          id="boutonaction" 
+          @click="goToLogin"
+        >
+          Connectez-vous pour commencer !
+        </button>
       </section>
 
       <section>
         <h2>Témoignages</h2>
-        <blockquote>“C’est exactement ce qu’il me fallait pour mes révisions !”</blockquote>
-        <blockquote>“Super simple d’utilisation et très pratique pour les contrôles !”</blockquote>
+        <blockquote>"C'est exactement ce qu'il me fallait pour mes révisions !"</blockquote>
+        <blockquote>"Super simple d'utilisation et très pratique pour les contrôles !"</blockquote>
       </section>
     </main>
 
@@ -56,44 +58,111 @@
 </template>
 
 <script>
+import Header from '@/components/Header.vue';
+import { useAuthStore } from '@/stores/auth';
+
 export default {
   name: 'HomeView',
-  methods: {
-    goToSelectQcm() {
-      // simple navigation vers la page liste de QCM (ajustez selon votre router)
-      window.location.href = 'select-qcm.html';
+  
+  components: {
+    Header
+  },
+  
+  setup() {
+    const authStore = useAuthStore();
+    return { authStore };
+  },
+  
+  computed: {
+    isAuthenticated() {
+      // Use the auth store instead of directly accessing localStorage
+      return this.authStore.isAuthenticated;
     }
   },
-  mounted() {
-    // injecte le css existant (conserve css/create-qcm.css)
-    const href = '/css/create-qcm.css';
-    if (!document.querySelector(`link[href="${href}"]`)) {
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = href;
-      document.head.appendChild(link);
+  
+  methods: {
+    goToSelectQcm() {
+      // Navigate to QCM selection page using Vue Router
+      this.$router.push({ name: 'SelectQCM' });
+    },
+    
+    goToLogin() {
+      // Navigate to login page using Vue Router
+      this.$router.push({ name: 'Login' });
     }
   }
 };
 </script>
 
 <style scoped>
-/* styles extraits du bouton présent dans l'original */
+/* Main content spacing to account for fixed header */
+main { 
+  padding: 1rem;
+  margin-top: 180px; /* Space for fixed header */
+}
+
+/* Section styling */
+section {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+section h2 {
+  color: #d64237;
+  margin-bottom: 15px;
+}
+
+section ul, section ol {
+  line-height: 1.8;
+  color: #35424a;
+}
+
+section p {
+  line-height: 1.8;
+  color: #35424a;
+  font-size: 16px;
+}
+
+/* Button styling */
 #boutonaction {
   display: inline-block;
   font-weight: bold;
   color: #fcf3e8;
   background: linear-gradient(50deg, #db7850, #d64237);
   border-radius: 30px;
-  padding: 10px 10px;
+  padding: 12px 24px;
   cursor: pointer;
   border: none;
-  margin-top: 0;
-}
-#boutonaction:hover {
-  background: #a04945;
+  margin-top: 20px;
+  font-size: 16px;
+  transition: all 0.3s ease;
 }
 
-/* spacing de base */
-main { padding: 1rem; }
+#boutonaction:hover {
+  background: #a04945;
+  transform: scale(1.05);
+}
+
+/* Testimonials styling */
+blockquote {
+  background: #fcf3e8;
+  border-left: 4px solid #db7850;
+  padding: 15px 20px;
+  margin: 15px 0;
+  font-style: italic;
+  color: #35424a;
+}
+
+/* Footer styling */
+footer {
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(50deg, #db6c50 70%, #d64237);
+  color: #ffeace;
+  margin-top: 40px;
+}
 </style>

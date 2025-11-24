@@ -1,7 +1,4 @@
 <?php
-// NOTE: cette page a été portée vers le client Vue.
-// Composant Vue : client/src/views/SelectQcm.vue
-// Assets : client/src/assets
 require_once __DIR__ . '/auth.php';
 
 // Vérification de l'authentification

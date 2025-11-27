@@ -6,3 +6,38 @@
     align-items: flex-start;
     padding: 25px 20px 15px 20px !important;
 }
+
+/* Correction specific styles - scoped to correction view only */
+.correction-container .answers > div {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    margin: 8px 0;
+    border-radius: 10px;
+    background: transparent;
+    border: 3px solid transparent;
+    transition: all 0.2s ease;
+}
+
+/* Bonnes réponses : background vert */
+.correction-container .answers > div.correct-answer {
+    background: rgba(140, 255, 192, 0.15) !important;
+    border-color: #3fc27a !important;
+    border-left-width: 6px !important;
+}
+
+/* Réponses sélectionnées par l'utilisateur : dot vert */
+.correction-container .answers > div.user-selected .answer-dot {
+    background: #3fc27a !important;
+    transform: translateY(0px) !important;
+}
+
+/* Réponses non sélectionnées par l'utilisateur : dot rouge */
+.correction-container .answers > div.user-not-selected .answer-dot {
+    background: #d64237 !important;
+    transform: translateY(0px) !important;
+}
+
+.correction-container .answers > div span:not(.answer-dot) {
+    margin-left: 10px;
+}

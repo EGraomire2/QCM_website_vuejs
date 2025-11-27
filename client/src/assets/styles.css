@@ -175,17 +175,7 @@ form button:hover {
     background: #45a049;
 }
 
-.qcm-header {
-    background-color: #f1efef;
-    margin-bottom: 10px;
-    padding: 5px 0px 20px 40px;
-    border-radius: 3px;
-    border: 1px solid #a0a0a0;
-}
 
-.qcm-header > div {
-    padding-top: 10px;   
-}
 
 /* ======================= TOGGLE SWITCH ====================== */
 .toggle-switch-container {
@@ -266,22 +256,7 @@ div.answers {
     margin-bottom: 30px;
 }
 
-.answer-dot {
-    display: inline-block;
-    width: 22px;
-    height: 22px;
-    margin-top: 8px;
-    margin-right: 14px;
-    border-radius: 30%;
-    cursor: pointer;
-    background: #d64237;
-    transition: background 0.2s ease;
-    transform: translateY(8px);
-}
 
-.answer-dot.correct {
-    background: linear-gradient(20deg, #3fc27a, #1ab1cc);
-}
 
 .explanation {
     text-align: center;
@@ -325,11 +300,4 @@ div.points-fields {
     text-align: center;
 }
 
-/* ======================= CORRECTION ====================== */
-div .true {
-    background-color: #8cffc0;
-}
 
-div .false {
-    background-color: #fa8888;
-}

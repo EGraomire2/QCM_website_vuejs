@@ -210,13 +210,12 @@ div.answers {
     display: inline-block;
     width: 22px;
     height: 22px;
-    margin-top: 8px;
     margin-right: 14px;
     border-radius: 30%;
     cursor: pointer;
     background: #d64237;
     transition: background 0.2s ease;
-    transform: translateY(8px);
+    transform: translateY(0px);
 }
 
 .answer-dot:hover {

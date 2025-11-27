@@ -2,7 +2,7 @@
   <div>
     <Header />
 
-    <main v-if="!loading && correctionData">
+    <main v-if="!loading && correctionData" class="correction-container">
       <!-- QCM Header Information -->
       <div class="div-header">
         <h2>Correction : {{ correctionData.qcm.name }}</h2>
@@ -147,23 +147,21 @@ export default {
       const isSelected = this.isUserAnswer(proposition.id, userAnswers);
       const isCorrect = proposition.validity;
 
-      // If user selected this answer
-      if (isSelected) {
-        // If it's correct, show green background
-        if (isCorrect) {
-          return 'true';
-        }
-        // If it's incorrect, show red background
-        return 'false';
-      }
+      let classes = [];
 
-      // If user didn't select but it was correct, show it's correct
+      // Ajouter la classe pour les bonnes réponses (background vert)
       if (isCorrect) {
-        return 'true';
+        classes.push('correct-answer');
       }
 
-      // Default: no special class
-      return '';
+      // Ajouter la classe selon si l'utilisateur a sélectionné ou non (couleur du dot)
+      if (isSelected) {
+        classes.push('user-selected');
+      } else {
+        classes.push('user-not-selected');
+      }
+
+      return classes.join(' ');
     },
 
     backToList() {

@@ -6,7 +6,7 @@
       <form id="create-qcm-form" @submit.prevent="submitQCM">
         <div class="div-header">
           <div class="qcm-name-div">
-            <label for="qcm-name">Nom du QCM :</label>
+            <label for="qcm-name">{{ $t('qcm.name') }}</label>
             <input 
               type="text" 
               class="qcm-name" 
@@ -17,7 +17,7 @@
           </div>
 
           <div class="qcm-subject-div">
-            <label for="qcm-subject">Matière :</label>
+            <label for="qcm-subject">{{ $t('qcm.subject') }}</label>
             <select 
               class="qcm-subject" 
               id="qcm-subject" 
@@ -25,7 +25,7 @@
               @change="onSubjectChange"
               required
             >
-              <option value="">Sélectionnez une matière</option>
+              <option value="">{{ $t('qcm.selectSubject') }}</option>
               <option 
                 v-for="subject in subjects" 
                 :key="subject.id" 
@@ -37,14 +37,14 @@
           </div>
 
           <div class="qcm-chapter-div">
-            <label for="qcm-chapter">Chapitre :</label>
+            <label for="qcm-chapter">{{ $t('qcm.chapter') }}</label>
             <select 
               class="qcm-chapter" 
               id="qcm-chapter" 
               v-model="selectedChapter"
               required
             >
-              <option value="">Sélectionnez un chapitre</option>
+              <option value="">{{ $t('qcm.selectChapter') }}</option>
               <option 
                 v-for="chapter in filteredChapters" 
                 :key="chapter.id" 
@@ -56,8 +56,8 @@
           </div>
 
           <p>
-            La matière ou bien le chapitre n'est pas encore disponible ?
-            <router-link to="/subjects/create">Ajoutez-en !</router-link>
+            {{ $t('qcm.addSubjectChapter') }}
+            <router-link to="/subjects/create">{{ $t('qcm.addLink') }}</router-link>
           </p>
         </div>
 
@@ -68,7 +68,7 @@
             class="div-body"
           >
             <div class="question-field">
-              <label :for="`question-${question.id}`">Question :</label>
+              <label :for="`question-${question.id}`">{{ $t('qcm.question') }} :</label>
               <input 
                 type="text" 
                 :id="`question-${question.id}`"
@@ -88,10 +88,10 @@
                   class="answer-dot" 
                   :class="{ correct: answer.isCorrect }"
                   @click="toggleCorrectAnswer(index, answerIndex)"
-                  title="Cliquez pour marquer comme bonne réponse"
+                  :title="$t('qcm.clickToMarkCorrect')"
                 ></span>
                 <label :for="`answer-${question.id}-${answer.id}`">
-                  Réponse {{ answerIndex + 1}} :
+                  {{ $t('qcm.answer') }} {{ answerIndex + 1}} :
                 </label>
                 <input 
                   type="text" 
@@ -105,7 +105,7 @@
                   class="remove-answer"
                   @click="removeAnswer(index, answerIndex)"
                 >
-                  Supprimer
+                  {{ $t('qcm.deleteAnswer') }}
                 </button>
               </div>
             </div>
@@ -116,12 +116,12 @@
                 class="add-answer"
                 @click="addAnswer(index)"
               >
-                Ajouter une réponse
+                {{ $t('qcm.addAnswer') }}
               </button>
             </div>
 
             <div class="toggle-switch-container">
-              <span>Mode de réponse :</span>
+              <span>{{ $t('qcm.responseMode') }}</span>
               <label class="switch">
                 <input 
                   type="checkbox" 
@@ -132,24 +132,24 @@
                 <span class="slider round"></span>
               </label>
               <span class="toggle-status">
-                {{ question.multipleChoice ? 'Sélection multiple' : 'Sélection unique' }}
+                {{ question.multipleChoice ? $t('qcm.multipleChoice') : $t('qcm.singleChoice') }}
               </span>
             </div>
 
             <div class="explanation-field">
-              <label :for="`explanation-${question.id}`">Explication :</label>
+              <label :for="`explanation-${question.id}`">{{ $t('qcm.explanation') }}</label>
               <textarea 
                 :id="`explanation-${question.id}`"
                 class="explanation"
                 v-model="question.explanation"
                 rows="3" 
-                placeholder="Entrez ici l'explication qui sera affichée lors de la correction..."
+                :placeholder="$t('qcm.explanationPlaceholder')"
               ></textarea>
             </div>
 
             <div class="points-fields">
               <div class="negative-points">
-                <label>Point négatif :</label>
+                <label>{{ $t('qcm.negativePoints') }}</label>
                 <div class="points">
                   <button 
                     type="button" 
@@ -169,7 +169,7 @@
                 </div>
               </div>
               <div class="question-points">
-                <label>Nombre de points :</label>
+                <label>{{ $t('qcm.questionPoints') }}</label>
                 <div class="points">
                   <button 
                     type="button" 
@@ -196,7 +196,7 @@
                 class="delete-question"
                 @click="removeQuestion(index)"
               >
-                Supprimer la question
+                {{ $t('qcm.deleteQuestion') }}
               </button>
             </div>
           </div>
@@ -207,17 +207,17 @@
               id="add-question"
               @click="addQuestion"
             >
-              Ajouter une question
+              {{ $t('qcm.addQuestion') }}
             </button>
             <div class="difficulty-field">
-              <label for="difficulty">Difficulté :</label>
+              <label for="difficulty">{{ $t('qcm.difficulty') }}</label>
               <select id="difficulty" v-model="difficulty" required>
-                <option value="0">Facile</option>
-                <option value="1">Moyen</option>
-                <option value="2">Difficile</option>
+                <option value="0">{{ $t('qcm.easy') }}</option>
+                <option value="1">{{ $t('qcm.medium') }}</option>
+                <option value="2">{{ $t('qcm.hard') }}</option>
               </select>
             </div>
-            <button type="submit" id="submit-qcm">Créer le QCM</button>
+            <button type="submit" id="submit-qcm">{{ $t('qcm.create') }}</button>
           </div>
         </div>
       </form>
@@ -281,7 +281,7 @@ export default {
         }));
       } catch (error) {
         console.error('Error loading subjects:', error);
-        useNotificationStore().showError('Erreur lors du chargement des matières');
+        useNotificationStore().showError(this.$t('subjects.errorLoadingSubjects'));
       }
     },
     async loadChapters() {
@@ -294,7 +294,7 @@ export default {
         }));
       } catch (error) {
         console.error('Error loading chapters:', error);
-        useNotificationStore().showError('Erreur lors du chargement des chapitres');
+        useNotificationStore().showError(this.$t('subjects.errorLoadingChapters'));
       }
     },
     onSubjectChange() {
@@ -381,24 +381,24 @@ export default {
     validateForm() {
       // Vérifier que le nom du QCM est rempli
       if (!this.qcmName.trim()) {
-        useNotificationStore().showError('Le nom du QCM est requis');
+        useNotificationStore().showError(this.$t('qcm.qcmNameRequired'));
         return false;
       }
 
       // Vérifier que la matière et le chapitre sont sélectionnés
       if (!this.selectedSubject) {
-        useNotificationStore().showError('Veuillez sélectionner une matière');
+        useNotificationStore().showError(this.$t('qcm.selectSubjectRequired'));
         return false;
       }
 
       if (!this.selectedChapter) {
-        useNotificationStore().showError('Veuillez sélectionner un chapitre');
+        useNotificationStore().showError(this.$t('qcm.selectChapterRequired'));
         return false;
       }
 
       // Vérifier qu'il y a au moins une question
       if (this.questions.length === 0) {
-        useNotificationStore().showError('Au moins une question est requise');
+        useNotificationStore().showError(this.$t('qcm.minOneQuestion'));
         return false;
       }
 
@@ -408,20 +408,20 @@ export default {
 
         // Vérifier que la question a un texte
         if (!question.heading.trim()) {
-          useNotificationStore().showError(`La question ${i + 1} est vide`);
+          useNotificationStore().showError(this.$t('qcm.questionEmpty', { index: i + 1 }));
           return false;
         }
 
         // Vérifier qu'il y a au moins 2 réponses
         if (question.answers.length < 2) {
-          useNotificationStore().showError(`La question ${i + 1} doit avoir au moins 2 réponses`);
+          useNotificationStore().showError(this.$t('qcm.minTwoAnswers', { index: i + 1 }));
           return false;
         }
 
         // Vérifier que toutes les réponses ont un texte
         for (let j = 0; j < question.answers.length; j++) {
           if (!question.answers[j].text.trim()) {
-            useNotificationStore().showError(`La réponse ${j + 1} de la question ${i + 1} est vide`);
+            useNotificationStore().showError(this.$t('qcm.answerEmpty', { answerIndex: j + 1, questionIndex: i + 1 }));
             return false;
           }
         }
@@ -429,7 +429,7 @@ export default {
         // Vérifier qu'au moins une réponse est correcte
         const hasCorrectAnswer = question.answers.some(answer => answer.isCorrect);
         if (!hasCorrectAnswer) {
-          useNotificationStore().showError(`La question ${i + 1} doit avoir au moins une réponse correcte`);
+          useNotificationStore().showError(this.$t('qcm.minOneCorrect', { index: i + 1 }));
           return false;
         }
       }
@@ -467,7 +467,7 @@ export default {
         const response = await api.post('/api/qcm/create', qcmData);
 
         if (response.data.success) {
-          useNotificationStore().showSuccess('QCM créé avec succès !');
+          useNotificationStore().showSuccess(this.$t('qcm.qcmCreatedSuccess'));
           // Réinitialiser le formulaire
           this.resetForm();
           // Rediriger vers la liste des QCM après un court délai
@@ -477,7 +477,7 @@ export default {
         }
       } catch (error) {
         console.error('Error creating QCM:', error);
-        const errorMessage = error.response?.data?.message || 'Erreur lors de la création du QCM';
+        const errorMessage = error.response?.data?.message || this.$t('qcm.errorCreatingQcm');
         useNotificationStore().showError(errorMessage);
       }
     },

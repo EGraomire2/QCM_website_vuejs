@@ -1,13 +1,13 @@
 <template>
   <div class="container">
     <form id="register-form" @submit.prevent="handleSubmit">
-      <h2>S'inscrire :</h2>
+      <h2>{{ $t('auth.registerTitle') }}</h2>
 
       <div class="inputBox">
         <input
           type="text"
           name="username"
-          placeholder="Nom d'utilisateur"
+          :placeholder="$t('auth.username')"
           v-model="form.username"
           required
           :disabled="isLoading"
@@ -18,7 +18,7 @@
         <input
           type="email"
           name="email"
-          placeholder="Adresse e-mail"
+          :placeholder="$t('auth.email')"
           v-model="form.email"
           required
           :disabled="isLoading"
@@ -29,7 +29,7 @@
         <input
           type="password"
           name="password1"
-          placeholder="Mot de passe"
+          :placeholder="$t('auth.password')"
           v-model="form.password1"
           required
           minlength="6"
@@ -41,7 +41,7 @@
         <input
           type="password"
           name="password2"
-          placeholder="Confirmer le mot de passe"
+          :placeholder="$t('auth.confirmPassword')"
           v-model="form.password2"
           required
           minlength="6"
@@ -53,14 +53,14 @@
         <input 
           type="submit" 
           name="inscription" 
-          :value="isLoading ? 'Inscription...' : 'S\'inscrire'"
+          :value="isLoading ? $t('auth.registering') : $t('auth.registerButton')"
           :disabled="isLoading"
         >
       </div>
 
       <div class="inputBox">
-        <p>Déjà un compte ?
-          <router-link to="/login">Connectez-vous</router-link>
+        <p>{{ $t('auth.hasAccount') }}
+          <router-link to="/login">{{ $t('auth.signIn') }}</router-link>
         </p>
       </div>
     </form>
@@ -103,26 +103,26 @@ export default {
     validateForm() {
       // Validation du nom d'utilisateur
       if (!this.form.username || this.form.username.trim().length < 3) {
-        this.notificationStore.showError('Le nom d\'utilisateur doit contenir au moins 3 caractères.')
+        this.notificationStore.showError(this.$t('auth.usernameMinLength'))
         return false
       }
 
       // Validation de l'email
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
       if (!emailRegex.test(this.form.email)) {
-        this.notificationStore.showError('Veuillez entrer une adresse e-mail valide.')
+        this.notificationStore.showError(this.$t('auth.invalidEmail'))
         return false
       }
 
       // Validation de la longueur du mot de passe
       if (this.form.password1.length < 6) {
-        this.notificationStore.showError('Le mot de passe doit contenir au moins 6 caractères.')
+        this.notificationStore.showError(this.$t('auth.passwordMinLength'))
         return false
       }
 
       // Validation de la correspondance des mots de passe
       if (this.form.password1 !== this.form.password2) {
-        this.notificationStore.showError('Les mots de passe ne correspondent pas.')
+        this.notificationStore.showError(this.$t('auth.passwordMismatch'))
         return false
       }
 

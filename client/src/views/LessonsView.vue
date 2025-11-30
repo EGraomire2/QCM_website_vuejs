@@ -6,14 +6,14 @@
       <h2 id="pdf-title">{{ pdfTitle }}</h2>
 
       <div class="pdf-selector">
-        <label for="pdf-select">Choisissez votre fiche de révisions :</label>
+        <label for="pdf-select">{{ $t('lessons.selectPdf') }}</label>
         <select id="pdf-select" v-model="selectedPdf" @change="onPdfChange">
-          <option value="">-- Sélectionner un PDF --</option>
-          <option v-for="opt in pdfOptions" :key="opt.path" :value="opt.path">{{ opt.label }}</option>
+          <option value="">{{ $t('lessons.selectOption') }}</option>
+          <option v-for="opt in pdfOptions" :key="opt.path" :value="opt.path">{{ $t(opt.labelKey) }}</option>
         </select>
       </div>
 
-      <button id="download-button" v-if="selectedPdf" @click="downloadPdf">Télécharger</button>
+      <button id="download-button" v-if="selectedPdf" @click="downloadPdf">{{ $t('lessons.download') }}</button>
 
       <iframe id="pdf-viewer" v-if="selectedPdf" :src="iframeSrc"></iframe>
     </main>
@@ -34,16 +34,16 @@ export default {
       iframeSrc: '',
       pdfTitle: '',
       pdfOptions: [
-        { path: 'docs/Fiche_Methodes_1_SM301.pdf', label: 'S3-Probabilités-1' },
-        { path: 'docs/Fiche_Methodes_2_SM301.pdf', label: 'S3-Probabilités-2' },
-        { path: 'docs/Fiche_Methodes_SM302.pdf', label: 'S3-Fonctions de plusieurs variables' },
-        { path: 'docs/Fiche_Methodes_Chapitre_1_SM202.pdf', label: 'S2-Analyse 2 Chapitre 1' },
-        { path: 'docs/Fiche_Methodes_Chapitre_1_SM402.pdf', label: 'S4-Automates finis et expression rationnelles' },
-        { path: 'docs/Fiche_Methodes_Chapitre_2_1_SM202.pdf', label: 'S2-Analyse 2 Chapitre 2 n°1' },
-        { path: 'docs/Fiche_Methodes_Chapitre_2_2_SM202.pdf', label: 'S2-Analyse 2 Chapitre 2 n°2' },
-        { path: 'docs/Fiche_Methodes_Chapitre_3_SM202.pdf', label: 'S2-Analyse 2 Chapitre 3' },
-        { path: 'docs/Fiche_Methodes_SM401.pdf', label: 'S4-Modélisation Mathématiques' },
-        { path: 'docs/Fiche_Trigonometrie.pdf', label: 'Fiche trigonométrie' }
+        { path: 'docs/Fiche_Methodes_1_SM301.pdf', labelKey: 'lessons.s3Proba1' },
+        { path: 'docs/Fiche_Methodes_2_SM301.pdf', labelKey: 'lessons.s3Proba2' },
+        { path: 'docs/Fiche_Methodes_SM302.pdf', labelKey: 'lessons.s3Functions' },
+        { path: 'docs/Fiche_Methodes_Chapitre_1_SM202.pdf', labelKey: 'lessons.s2Analysis1' },
+        { path: 'docs/Fiche_Methodes_Chapitre_1_SM402.pdf', labelKey: 'lessons.s4Automata' },
+        { path: 'docs/Fiche_Methodes_Chapitre_2_1_SM202.pdf', labelKey: 'lessons.s2Analysis2_1' },
+        { path: 'docs/Fiche_Methodes_Chapitre_2_2_SM202.pdf', labelKey: 'lessons.s2Analysis2_2' },
+        { path: 'docs/Fiche_Methodes_Chapitre_3_SM202.pdf', labelKey: 'lessons.s2Analysis3' },
+        { path: 'docs/Fiche_Methodes_SM401.pdf', labelKey: 'lessons.s4MathModeling' },
+        { path: 'docs/Fiche_Trigonometrie.pdf', labelKey: 'lessons.trigonometry' }
       ]
     };
   },
@@ -55,7 +55,7 @@ export default {
         
         // Update the title with the selected PDF label
         const selectedOption = this.pdfOptions.find(opt => opt.path === this.selectedPdf);
-        this.pdfTitle = selectedOption ? selectedOption.label : '';
+        this.pdfTitle = selectedOption ? this.$t(selectedOption.labelKey) : '';
       } else {
         // Clear the iframe and title when no PDF is selected
         this.iframeSrc = '';

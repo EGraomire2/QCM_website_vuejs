@@ -5,18 +5,18 @@
     <main v-if="!loading && correctionData" class="correction-container">
       <!-- QCM Header Information -->
       <div class="div-header">
-        <h2>Correction : {{ correctionData.qcm.name }}</h2>
-        <p>Difficulté : {{ getDifficultyLabel(correctionData.qcm.difficulty) }}</p>
-        <p>Note obtenue : <strong>{{ correctionData.attempt.grade.toFixed(2) }} / 20</strong></p>
-        <p>Date : {{ formatDate(correctionData.attempt.date) }}</p>
+        <h2>{{ $t('qcm.correctionTitle') }} {{ correctionData.qcm.name }}</h2>
+        <p>{{ $t('qcm.difficulty') }} {{ getDifficultyLabel(correctionData.qcm.difficulty) }}</p>
+        <p>{{ $t('qcm.gradeObtained') }} <strong>{{ correctionData.attempt.grade.toFixed(2) }} / 20</strong></p>
+        <p>{{ $t('qcm.date') }} {{ formatDate(correctionData.attempt.date) }}</p>
       </div>
 
       <!-- Questions and Answers -->
       <div v-for="(question, index) in correctionData.questions" :key="question.id" class="div-body">
-        <h3>Question {{ index + 1 }}</h3>
+        <h3>{{ $t('qcm.question') }} {{ index + 1 }}</h3>
         <p><strong>{{ question.heading }}</strong></p>
-        <p>Type : {{ question.type === 'unique' ? 'Choix unique' : 'Choix multiple' }}</p>
-        <p>Points : {{ question.points }} | Points négatifs : {{ question.negativePoints }}</p>
+        <p>{{ $t('qcm.type') }} {{ question.type === 'unique' ? $t('qcm.uniqueChoice') : $t('qcm.multipleChoiceType') }}</p>
+        <p>{{ $t('qcm.points') }} : {{ question.points }} | {{ $t('qcm.negativePointsLabel') }} : {{ question.negativePoints }}</p>
 
         <!-- Propositions -->
         <div class="answers">
@@ -30,37 +30,37 @@
               :class="{ 'correct': proposition.validity }"
             ></span>
             <span>{{ proposition.proposition }}</span>
-            <span v-if="isUserAnswer(proposition.id, question.userAnswers)"> ← Votre réponse</span>
+            <span v-if="isUserAnswer(proposition.id, question.userAnswers)"> {{ $t('qcm.yourAnswer') }}</span>
           </div>
         </div>
 
         <!-- Explanation if exists -->
         <div v-if="question.explanation" class="explanation">
-          <strong>Explication :</strong> {{ question.explanation }}
+          <strong>{{ $t('qcm.explanation') }}</strong> {{ question.explanation }}
         </div>
 
         <!-- Points earned for this question -->
         <div class="points-fields">
-          <p><strong>Points obtenus : {{ question.pointsEarned }} / {{ question.points }}</strong></p>
+          <p><strong>{{ $t('qcm.pointsEarned') }} {{ question.pointsEarned }} / {{ question.points }}</strong></p>
         </div>
       </div>
 
       <!-- Back button -->
       <div class="div-body back-button-container">
-        <button @click="backToList">Retour à la liste des QCM</button>
+        <button @click="backToList">{{ $t('qcm.backToList') }}</button>
       </div>
     </main>
 
     <main v-else-if="loading">
       <div class="div-header">
-        <p>Chargement de la correction...</p>
+        <p>{{ $t('qcm.loadingCorrection') }}</p>
       </div>
     </main>
 
     <main v-else-if="error">
       <div class="div-header">
         <p style="color: red;">{{ error }}</p>
-        <button @click="backToList">Retour à la liste des QCM</button>
+        <button @click="backToList">{{ $t('qcm.backToList') }}</button>
       </div>
     </main>
   </div>
@@ -96,7 +96,7 @@ export default {
         const attemptId = this.$route.params.attemptId;
 
         if (!qcmId || !attemptId) {
-          this.error = 'Paramètres manquants';
+          this.error = this.$t('qcm.missingParams');
           return;
         }
 
@@ -106,11 +106,11 @@ export default {
         if (response.data.success) {
           this.correctionData = response.data;
         } else {
-          this.error = response.data.message || 'Erreur lors du chargement de la correction';
+          this.error = response.data.message || this.$t('qcm.errorLoadingCorrection');
         }
       } catch (err) {
         console.error('Error loading correction:', err);
-        this.error = err.response?.data?.message || 'Erreur lors du chargement de la correction';
+        this.error = err.response?.data?.message || this.$t('qcm.errorLoadingCorrection');
         
         const notificationStore = useNotificationStore();
         notificationStore.showError(this.error);
@@ -121,11 +121,11 @@ export default {
 
     getDifficultyLabel(difficulty) {
       const labels = {
-        0: 'Facile',
-        1: 'Moyen',
-        2: 'Difficile'
+        0: this.$t('qcm.easy'),
+        1: this.$t('qcm.medium'),
+        2: this.$t('qcm.hard')
       };
-      return labels[difficulty] || 'Inconnu';
+      return labels[difficulty] || '';
     },
 
     formatDate(dateString) {

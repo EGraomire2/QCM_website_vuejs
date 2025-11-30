@@ -5,16 +5,16 @@
     <main>
       <!-- Formulaire de sélection de matière et chapitre -->
       <div class="div-header">
-        <h2>Sélectionner un QCM</h2>
+        <h2>{{ $t('qcm.selectTitle') }}</h2>
         
         <div style="margin-top: 20px;">
-          <label for="subject-select">Matière :</label>
+          <label for="subject-select">{{ $t('qcm.subject') }}</label>
           <select 
             id="subject-select" 
             v-model="selectedSubjectId" 
             @change="onSubjectChange"
           >
-            <option :value="null">-- Choisir une matière --</option>
+            <option :value="null">{{ $t('qcm.chooseSubject') }}</option>
             <option 
               v-for="subject in subjects" 
               :key="subject.id" 
@@ -26,14 +26,14 @@
         </div>
 
         <div style="margin-top: 15px;">
-          <label for="chapter-select">Chapitre :</label>
+          <label for="chapter-select">{{ $t('qcm.chapter') }}</label>
           <select 
             id="chapter-select" 
             v-model="selectedChapterId" 
             @change="onChapterChange"
             :disabled="!selectedSubjectId"
           >
-            <option :value="null">-- Choisir un chapitre --</option>
+            <option :value="null">{{ $t('qcm.chooseChapter') }}</option>
             <option 
               v-for="chapter in filteredChapters" 
               :key="chapter.id" 
@@ -54,22 +54,22 @@
         >
           <h3>{{ qcm.name }}</h3>
           <p>
-            Difficulté : 
-            <span v-if="qcm.difficulty === 0">Facile</span>
-            <span v-else-if="qcm.difficulty === 1">Moyen</span>
-            <span v-else>Difficile</span>
+            {{ $t('qcm.difficulty') }} 
+            <span v-if="qcm.difficulty === 0">{{ $t('qcm.easy') }}</span>
+            <span v-else-if="qcm.difficulty === 1">{{ $t('qcm.medium') }}</span>
+            <span v-else>{{ $t('qcm.hard') }}</span>
           </p>
           
           <!-- Afficher la tentative précédente si elle existe -->
           <p v-if="getAttemptForQcm(qcm.id)">
-            Dernière tentative : 
+            {{ $t('qcm.lastAttempt') }} 
             <strong>{{ getAttemptForQcm(qcm.id).grade.toFixed(2) }}/20</strong>
             le {{ formatDate(getAttemptForQcm(qcm.id).date) }}
           </p>
           
           <div style="margin-top: 10px;">
             <button @click="startQcm(qcm.id)">
-              {{ getAttemptForQcm(qcm.id) ? 'Refaire le QCM' : 'Lancer le QCM' }}
+              {{ getAttemptForQcm(qcm.id) ? $t('qcm.retry') : $t('qcm.launch') }}
             </button>
             
             <!-- Lien vers la correction si une tentative existe -->
@@ -78,7 +78,7 @@
               @click="viewCorrection(qcm.id, getAttemptForQcm(qcm.id).id)"
               style="margin-left: 45px !important; background: linear-gradient(50deg, #3f98c2, #491acc);"
             >
-              Voir la correction
+              {{ $t('qcm.correction') }}
             </button>
           </div>
         </div>
@@ -86,12 +86,12 @@
 
       <!-- Message si aucun QCM trouvé -->
       <div v-else-if="selectedChapterId" class="div-body">
-        <p>Aucun QCM disponible pour ce chapitre.</p>
+        <p>{{ $t('qcm.noQcmAvailable') }}</p>
       </div>
 
       <!-- Message initial -->
       <div v-else class="div-body">
-        <p>Sélectionnez une matière et un chapitre pour voir les QCM disponibles.</p>
+        <p>{{ $t('qcm.selectSubjectChapter') }}</p>
       </div>
     </main>
   </div>
@@ -159,6 +159,8 @@ export default {
         this.attempts = response.data.attempts;
       } catch (error) {
         console.error('Erreur lors du chargement des tentatives:', error);
+        const notificationStore = useNotificationStore();
+        notificationStore.showError(this.$t('messages.errorLoadingAttempts'));
       }
     },
 
@@ -191,7 +193,7 @@ export default {
       } catch (error) {
         console.error('Erreur lors du chargement des QCM:', error);
         const notificationStore = useNotificationStore();
-        notificationStore.showError('Erreur lors du chargement des QCM');
+        notificationStore.showError(this.$t('subjects.errorLoadingSubjects'));
       } finally {
         this.loading = false;
       }

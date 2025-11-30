@@ -9,17 +9,17 @@
 
         <div class="div-body">
       <form id="create-chapter" @submit.prevent="handleChapterSubmit">
-        <h2>Créer un chapitre</h2>
+        <h2>{{ $t('subjects.createChapterTitle') }}</h2>
         <div class="answers">
-          <label for="subject-select">Choisir une matière : </label>
+          <label for="subject-select">{{ $t('subjects.chooseSubject') }}</label>
           <select v-model="chapterForm.subjectId" id="subject-select" required>
-            <option value="" disabled>-- Sélectionner une matière --</option>
+            <option value="" disabled>{{ $t('subjects.selectSubject') }}</option>
             <option v-for="subject in subjects" :key="subject.ID_Subject" :value="subject.ID_Subject">
               {{ subject.Subject_name }}
             </option>
           </select>
           <br><br>
-          <label for="chapter-name">Nom du chapitre : </label>
+          <label for="chapter-name">{{ $t('subjects.chapterName') }}</label>
           <input 
             v-model="chapterForm.name" 
             type="text" 
@@ -29,16 +29,16 @@
           >
         </div>
         <button type="submit" class="submit-chapter" :disabled="isLoading">
-          {{ isLoading ? 'Création...' : 'Créer le chapitre' }}
+          {{ isLoading ? $t('subjects.creating') : $t('subjects.createChapter') }}
         </button>
       </form>
     </div>
 
     <div class="div-body">
       <form id="create-subject" @submit.prevent="handleSubjectSubmit">
-        <h2>Créer une matière</h2>
+        <h2>{{ $t('subjects.createSubjectTitle') }}</h2>
         <div class="answers">
-          <label for="subject-name">Nom de la matière : </label>
+          <label for="subject-name">{{ $t('subjects.subjectName') }}</label>
           <input 
             v-model="subjectForm.name" 
             type="text" 
@@ -48,7 +48,7 @@
           >
         </div>
         <button type="submit" class="submit-subject" :disabled="isLoading">
-          {{ isLoading ? 'Création...' : 'Créer la matière' }}
+          {{ isLoading ? $t('subjects.creating') : $t('subjects.createSubject') }}
         </button>
       </form>
         </div>
@@ -99,7 +99,7 @@ export default {
         this.subjects = response.data.data || []
       } catch (error) {
         console.error('Erreur lors du chargement des matières:', error)
-        this.notificationStore.showError('Erreur lors du chargement des matières')
+        this.notificationStore.showError(this.$t('subjects.errorLoadingSubjects'))
       }
     },
 
@@ -113,7 +113,7 @@ export default {
       const subjectName = this.subjectForm.name.trim()
 
       if (!subjectName) {
-        errorContainer.textContent = 'Merci de remplir le nom du sujet !'
+        errorContainer.textContent = this.$t('subjects.fillSubjectName')
         return
       }
 
@@ -132,14 +132,14 @@ export default {
           }
           this.subjects.push(newOption)
           
-          successContainer.textContent = 'Matière créée avec succès !'
+          successContainer.textContent = this.$t('subjects.subjectCreatedSuccess')
           this.subjectForm.name = ''
         } else {
-          errorContainer.textContent = response.data.message || 'Erreur lors de la création'
+          errorContainer.textContent = response.data.message || this.$t('subjects.errorCreating')
         }
       } catch (error) {
         console.error('Erreur:', error)
-        errorContainer.textContent = error.response?.data?.message || 'Impossible de contacter le serveur.'
+        errorContainer.textContent = error.response?.data?.message || this.$t('subjects.cannotContactServer')
       } finally {
         this.isLoading = false
       }
@@ -156,7 +156,7 @@ export default {
       const chapterName = this.chapterForm.name.trim()
 
       if (!subjectId || !chapterName) {
-        errorContainer.textContent = 'Merci de remplir le nom du chapitre et de choisir un sujet !'
+        errorContainer.textContent = this.$t('subjects.fillChapterName')
         return
       }
 
@@ -169,15 +169,15 @@ export default {
         })
 
         if (response.data.success) {
-          successContainer.textContent = 'Chapitre créé avec succès !'
+          successContainer.textContent = this.$t('subjects.chapterCreatedSuccess')
           this.chapterForm.name = ''
           this.chapterForm.subjectId = ''
         } else {
-          errorContainer.textContent = response.data.message || 'Erreur lors de la création'
+          errorContainer.textContent = response.data.message || this.$t('subjects.errorCreating')
         }
       } catch (error) {
         console.error('Erreur:', error)
-        errorContainer.textContent = error.response?.data?.message || 'Impossible de contacter le serveur.'
+        errorContainer.textContent = error.response?.data?.message || this.$t('subjects.cannotContactServer')
       } finally {
         this.isLoading = false
       }

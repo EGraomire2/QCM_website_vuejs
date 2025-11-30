@@ -3,12 +3,12 @@
     <Header />
 
     <main v-if="loading" class="loading-container">
-      <p>Chargement du QCM...</p>
+      <p>{{ $t('qcm.loading') }}</p>
     </main>
 
     <main v-else-if="error" class="error-container">
       <p class="error-message">{{ error }}</p>
-      <button @click="$router.push('/qcm/select')" class="back-button">Retour à la sélection</button>
+      <button @click="$router.push('/qcm/select')" class="back-button">{{ $t('qcm.backToSelection') }}</button>
     </main>
 
     <main v-else>
@@ -16,17 +16,17 @@
       <div class="div-header">
         <h2>{{ qcm.name }}</h2>
         <p v-if="qcm.difficulty !== undefined">
-          Difficulté: 
-          <span v-if="qcm.difficulty === 0">Facile</span>
-          <span v-if="qcm.difficulty === 1">Moyen</span>
-          <span v-if="qcm.difficulty === 2">Difficile</span>
+          {{ $t('qcm.difficulty') }} 
+          <span v-if="qcm.difficulty === 0">{{ $t('qcm.easy') }}</span>
+          <span v-if="qcm.difficulty === 1">{{ $t('qcm.medium') }}</span>
+          <span v-if="qcm.difficulty === 2">{{ $t('qcm.hard') }}</span>
         </p>
       </div>
 
       <!-- Questions Form -->
       <form @submit.prevent="submitAnswers">
         <div v-for="(question, idx) in questions" :key="question.id" class="answers">
-          <p><strong>Question {{ idx + 1 }}:</strong> {{ question.heading }}</p>
+          <p><strong>{{ $t('qcm.question') }} {{ idx + 1 }}:</strong> {{ question.heading }}</p>
           
           <!-- Single choice question (radio buttons) -->
           <div v-if="question.type === 'unique'">
@@ -64,7 +64,7 @@
 
         <div class="div-body">
           <button type="submit" id="submit-qcm" :disabled="submitting">
-            {{ submitting ? 'Envoi en cours...' : 'Soumettre mes réponses' }}
+            {{ submitting ? $t('qcm.submitting') : $t('qcm.submit') }}
           </button>
         </div>
       </form>
@@ -104,7 +104,7 @@ export default {
         const qcmId = this.$route.params.id;
         
         if (!qcmId) {
-          this.error = 'ID du QCM manquant';
+          this.error = this.$t('qcm.missingQcmId');
           return;
         }
 
@@ -126,11 +126,11 @@ export default {
             }
           });
         } else {
-          this.error = response.data.message || 'Erreur lors du chargement du QCM';
+          this.error = response.data.message || this.$t('qcm.errorCreatingQcm');
         }
       } catch (err) {
         console.error('Error loading QCM:', err);
-        this.error = 'Impossible de charger le QCM. Veuillez réessayer.';
+        this.error = this.$t('qcm.errorLoadingQcm');
       } finally {
         this.loading = false;
       }
@@ -191,7 +191,7 @@ export default {
           const attemptId = response.data.attemptId;
           const grade = response.data.grade;
           
-          notificationStore.showSuccess(`QCM soumis avec succès! Note: ${grade.toFixed(2)}/20`);
+          notificationStore.showSuccess(this.$t('qcm.qcmSubmittedSuccess', { grade: grade.toFixed(2) }));
           
           // Redirect to correction page
           this.$router.push({
@@ -202,12 +202,12 @@ export default {
             }
           });
         } else {
-          notificationStore.showError(response.data.message || 'Erreur lors de la soumission');
+          notificationStore.showError(response.data.message || this.$t('qcm.errorSubmittingMessage'));
         }
       } catch (err) {
         console.error('Error submitting answers:', err);
         const notificationStore = useNotificationStore();
-        notificationStore.showError('Impossible de soumettre les réponses. Veuillez réessayer.');
+        notificationStore.showError(this.$t('qcm.errorSubmitting'));
       } finally {
         this.submitting = false;
       }

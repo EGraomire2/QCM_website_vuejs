@@ -5,26 +5,26 @@
 
     <main>
       <section>
-        <h2>Pourquoi choisir SOSprépa ?</h2>
+        <h2>{{ $t('home.whyTitle') }}</h2>
         <ul>
-          <li>✅ Aligné avec le programme EFREI</li>
-          <li>✅ Révision efficace et interactive</li>
-          <li>✅ Accessible sur tous les appareils</li>
+          <li>✅ {{ $t('home.feature1') }}</li>
+          <li>✅ {{ $t('home.feature2') }}</li>
+          <li>✅ {{ $t('home.feature3') }}</li>
         </ul>
       </section>
 
       <section>
-        <h2>Pour qui ?</h2>
-        <p>🎓 Élèves de 1ʳᵉ et 2ᵉ année motivés à réussir leurs CC et à gagner en confiance.</p>
+        <h2>{{ $t('home.forWhoTitle') }}</h2>
+        <p>🎓 {{ $t('home.forWhoDesc') }}</p>
       </section>
 
       <section>
-        <h2>Comment ça marche ?</h2>
+        <h2>{{ $t('home.howTitle') }}</h2>
         <ol>
-          <li>📂 Choisis une matière</li>
-          <li>📝 Lance un QCM</li>
-          <li>📊 Analyse tes résultats</li>
-          <li>🔁 Progresse à ton rythme</li>
+          <li>📂 {{ $t('home.step1') }}</li>
+          <li>📝 {{ $t('home.step2') }}</li>
+          <li>📊 {{ $t('home.step3') }}</li>
+          <li>🔁 {{ $t('home.step4') }}</li>
         </ol>
 
         <!-- Conditional button based on authentication -->
@@ -33,26 +33,26 @@
           id="boutonaction" 
           @click="goToSelectQcm"
         >
-          Passer à l'action !
+          {{ $t('home.ctaAuth') }}
         </button>
         <button 
           v-else 
           id="boutonaction" 
           @click="goToLogin"
         >
-          Connectez-vous pour commencer !
+          {{ $t('home.ctaGuest') }}
         </button>
       </section>
 
       <section>
-        <h2>Témoignages</h2>
-        <blockquote>"C'est exactement ce qu'il me fallait pour mes révisions !"</blockquote>
-        <blockquote>"Super simple d'utilisation et très pratique pour les contrôles !"</blockquote>
+        <h2>{{ $t('home.testimonialsTitle') }}</h2>
+        <blockquote>"{{ $t('home.testimonial1') }}"</blockquote>
+        <blockquote>"{{ $t('home.testimonial2') }}"</blockquote>
       </section>
     </main>
 
     <footer>
-      <p>&copy; 2025 QCM Website</p>
+      <p>{{ $t('app.copyright') }}</p>
     </footer>
   </div>
 </template>

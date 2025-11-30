@@ -1,13 +1,13 @@
 <template>
   <div class="container">
     <form id="login-form" @submit.prevent="handleSubmit">
-      <h2>S'identifier :</h2>
+      <h2>{{ $t('auth.loginTitle') }}</h2>
 
       <div class="inputBox">
         <input
           type="email"
           name="email"
-          placeholder="Adresse e-mail"
+          :placeholder="$t('auth.email')"
           v-model="form.email"
           required
           :disabled="isLoading"
@@ -18,7 +18,7 @@
         <input
           type="password"
           name="password"
-          placeholder="Mot de passe"
+          :placeholder="$t('auth.password')"
           v-model="form.password"
           required
           :disabled="isLoading"
@@ -29,14 +29,14 @@
         <input 
           type="submit" 
           name="connexion" 
-          :value="isLoading ? 'Connexion...' : 'Connexion'"
+          :value="isLoading ? $t('auth.connecting') : $t('auth.loginButton')"
           :disabled="isLoading"
         >
       </div>
 
       <div class="inputBox">
-        <p>Pas encore de compte ?
-          <router-link to="/register">Inscrivez-vous</router-link>
+        <p>{{ $t('auth.noAccount') }}
+          <router-link to="/register">{{ $t('auth.signUp') }}</router-link>
         </p>
       </div>
     </form>

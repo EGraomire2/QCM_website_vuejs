@@ -25,14 +25,15 @@ const verifyPassword = async (password, hash) => {
 
 /**
  * Generate a JWT token for a user
- * @param {object} user - User object with id, email, and teacher fields
+ * @param {object} user - User object with id, email, teacher, and admin fields
  * @returns {string} - JWT token
  */
 const generateToken = (user) => {
     const payload = {
         id: user.id,
         email: user.email,
-        teacher: user.teacher
+        teacher: user.teacher,
+        admin: user.admin
     };
     return jwt.sign(payload, jwtConfig.secret, { expiresIn: jwtConfig.expiresIn });
 };
@@ -105,7 +106,7 @@ const loginUser = async (email, password) => {
         // Find user by email
         console.log('🔧 [SERVICE] Recherche de l\'utilisateur...');
         const [users] = await pool.execute(
-            'SELECT ID_user, Nickname, Email, Password, Teacher FROM users WHERE Email = ?',
+            'SELECT ID_user, Nickname, Email, Password, Teacher, Administrator FROM users WHERE Email = ?',
             [email]
         );
 
@@ -139,7 +140,8 @@ const loginUser = async (email, password) => {
         const token = generateToken({
             id: user.ID_user,
             email: user.Email,
-            teacher: user.Teacher === 1
+            teacher: user.Teacher === 1,
+            admin: user.Administrator === 1
         });
 
         // Store token in database
@@ -157,7 +159,8 @@ const loginUser = async (email, password) => {
                 id: user.ID_user,
                 email: user.Email,
                 nickname: user.Nickname,
-                teacher: user.Teacher === 1
+                teacher: user.Teacher === 1,
+                admin: user.Administrator === 1
             }
         };
     } catch (error) {
@@ -178,7 +181,7 @@ const verifyUserToken = async (userId, token) => {
     try {
         // Get user from database
         const [users] = await pool.execute(
-            'SELECT ID_user, Nickname, Email, Teacher, Token FROM users WHERE ID_user = ?',
+            'SELECT ID_user, Nickname, Email, Teacher, Administrator, Token FROM users WHERE ID_user = ?',
             [userId]
         );
 
@@ -205,7 +208,8 @@ const verifyUserToken = async (userId, token) => {
                 id: user.ID_user,
                 email: user.Email,
                 nickname: user.Nickname,
-                teacher: user.Teacher === 1
+                teacher: user.Teacher === 1,
+                admin: user.Administrator === 1
             }
         };
     } catch (error) {

@@ -23,6 +23,11 @@
         <template v-else>
           <li><router-link to="/">{{ $t('nav.home') }}</router-link></li>
           
+          <!-- Admin-only links -->
+          <template v-if="authStore.isAdmin">
+            <li><router-link to="/admin">{{ $t('nav.admin') }}</router-link></li>
+          </template>
+          
           <!-- Teacher-only links -->
           <template v-if="authStore.isTeacher">
             <li><router-link to="/qcm/create">{{ $t('nav.createQcm') }}</router-link></li>
@@ -63,6 +68,14 @@ export default {
       const newLang = locale.value === 'fr' ? 'en' : 'fr';
       changeLanguage(newLang);
     };
+    
+    // Debug: afficher les infos d'authentification
+    console.log('🔍 Auth Store State:', {
+      isAuthenticated: authStore.isAuthenticated,
+      isTeacher: authStore.isTeacher,
+      isAdmin: authStore.isAdmin,
+      user: authStore.user
+    });
     
     return { 
       authStore,

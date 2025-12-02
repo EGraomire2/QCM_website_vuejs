@@ -8,6 +8,7 @@ import AnswerQcmView from '@/views/AnswerQcmView.vue'
 import CorrectionView from '@/views/CorrectionView.vue'
 import LessonsView from '@/views/LessonsView.vue'
 import CreateSubjectView from '@/views/CreateSubjectView.vue'
+import AdminView from '@/views/AdminView.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useNotificationStore } from '@/stores/notification'
 
@@ -61,6 +62,12 @@ const routes = [
     name: 'CreateSubject', 
     component: CreateSubjectView,
     meta: { requiresAuth: true, requiresTeacher: true }
+  },
+  { 
+    path: '/admin', 
+    name: 'Admin', 
+    component: AdminView,
+    meta: { requiresAuth: true, requiresAdmin: true }
   }
 ]
 
@@ -101,6 +108,14 @@ router.beforeEach(async (to, _from, next) => {
     if (to.meta.requiresTeacher && !authStore.isTeacher) {
       // Rediriger vers la page d'accueil
       notificationStore.showError('Accès réservé aux professeurs.')
+      next({ name: 'Home' })
+      return
+    }
+    
+    // Vérifier si la route nécessite le rôle d'administrateur
+    if (to.meta.requiresAdmin && !authStore.isAdmin) {
+      // Rediriger vers la page d'accueil
+      notificationStore.showError('Accès réservé aux administrateurs.')
       next({ name: 'Home' })
       return
     }

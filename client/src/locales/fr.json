@@ -5,6 +5,7 @@
   },
   "nav": {
     "home": "Accueil",
+    "admin": "Administration",
     "createQcm": "Créer un QCM",
     "qcmList": "Liste de QCM",
     "lessons": "Notions de cours",
@@ -104,6 +105,7 @@
     "clickToMarkCorrect": "Cliquez pour marquer comme bonne réponse",
     "noQcmAvailable": "Aucun QCM disponible pour ce chapitre.",
     "selectSubjectChapter": "Sélectionnez une matière et un chapitre pour voir les QCM disponibles.",
+    "allDifficulties": "Toutes les difficultés",
     "qcmNameRequired": "Le nom du QCM est requis",
     "selectSubjectRequired": "Veuillez sélectionner une matière",
     "selectChapterRequired": "Veuillez sélectionner un chapitre",
@@ -160,5 +162,32 @@
   "messages": {
     "error": "Une erreur est survenue",
     "errorLoadingAttempts": "Erreur lors du chargement des tentatives"
+  },
+  "admin": {
+    "title": "Administration",
+    "qcmManagement": "Gestion des QCM",
+    "userManagement": "Gestion des utilisateurs",
+    "qcmList": "Liste des QCM",
+    "userList": "Liste des utilisateurs",
+    "deleteQcm": "Supprimer",
+    "confirmDelete": "Confirmer la suppression",
+    "confirmDeleteMessage": "Êtes-vous sûr de vouloir supprimer le QCM \"{name}\" ? Cette action est irréversible.",
+    "cancel": "Annuler",
+    "confirmDeleteButton": "Supprimer",
+    "deleting": "Suppression...",
+    "qcmDeletedSuccess": "QCM supprimé avec succès",
+    "errorDeletingQcm": "Erreur lors de la suppression du QCM",
+    "administrator": "Administrateur",
+    "teacher": "Professeur",
+    "student": "Étudiant",
+    "makeTeacher": "Promouvoir professeur",
+    "removeTeacher": "Révoquer professeur",
+    "teacherStatusGranted": "Statut professeur accordé",
+    "teacherStatusRevoked": "Statut professeur révoqué",
+    "errorUpdatingUser": "Erreur lors de la modification de l'utilisateur",
+    "errorLoadingUsers": "Erreur lors du chargement des utilisateurs",
+    "loadingUsers": "Chargement des utilisateurs...",
+    "filterByRole": "Filtrer par rôle :",
+    "allRoles": "Tous les rôles"
   }
 }

@@ -49,7 +49,21 @@ const requireTeacher = (req, res, next) => {
     next();
 };
 
+/**
+ * Middleware to require admin role
+ */
+const requireAdmin = (req, res, next) => {
+    if (!req.user || !req.user.admin) {
+        return res.status(403).json({
+            success: false,
+            message: 'Accès réservé aux administrateurs'
+        });
+    }
+    next();
+};
+
 export {
     authenticateToken,
-    requireTeacher
+    requireTeacher,
+    requireAdmin
 };

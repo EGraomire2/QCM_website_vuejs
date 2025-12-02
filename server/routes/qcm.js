@@ -1,6 +1,6 @@
 import express from 'express';
 import { pool } from '../config/database.js';
-import { authenticateToken, requireTeacher } from '../middleware/auth.js';
+import { authenticateToken, requireTeacher, requireAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -619,6 +619,113 @@ router.get('/qcm/:qcmId/correction/:attemptId', authenticateToken, async (req, r
 
     } catch (error) {
         next(error);
+    }
+});
+
+/**
+ * DELETE /api/qcm/:id
+ * Delete a QCM and all associated data (admin only)
+ * Deletes in cascade: Has_answered -> Answer_question -> Attempt -> Question -> Possible_answer -> QCM
+ */
+router.delete('/qcm/:id', authenticateToken, requireAdmin, async (req, res, next) => {
+    const connection = await pool.getConnection();
+    
+    try {
+        const qcmId = parseInt(req.params.id);
+
+        // Verify QCM exists
+        const [qcmRows] = await connection.execute(
+            'SELECT ID_QCM, Name_QCM FROM QCM WHERE ID_QCM = ?',
+            [qcmId]
+        );
+
+        if (qcmRows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'QCM non trouvé'
+            });
+        }
+
+        const qcmName = qcmRows[0].Name_QCM;
+
+        // Begin transaction
+        await connection.beginTransaction();
+
+        // Get all attempts for this QCM
+        const [attempts] = await connection.execute(
+            'SELECT ID_Attempt FROM Attempt WHERE ID_QCM = ?',
+            [qcmId]
+        );
+
+        // Delete Has_answered records for all attempts
+        if (attempts.length > 0) {
+            const attemptIds = attempts.map(a => a.ID_Attempt);
+            const placeholders = attemptIds.map(() => '?').join(',');
+            
+            await connection.execute(
+                `DELETE ha FROM Has_answered ha
+                 JOIN Answer_question aq ON ha.ID_Answer = aq.ID_Answer
+                 WHERE aq.ID_Attempt IN (${placeholders})`,
+                attemptIds
+            );
+
+            // Delete Answer_question records
+            await connection.execute(
+                `DELETE FROM Answer_question WHERE ID_Attempt IN (${placeholders})`,
+                attemptIds
+            );
+        }
+
+        // Delete all attempts for this QCM
+        await connection.execute(
+            'DELETE FROM Attempt WHERE ID_QCM = ?',
+            [qcmId]
+        );
+
+        // Get all questions for this QCM
+        const [questions] = await connection.execute(
+            'SELECT ID_Question FROM Question WHERE ID_QCM = ?',
+            [qcmId]
+        );
+
+        // Delete Possible_answer records for all questions
+        if (questions.length > 0) {
+            const questionIds = questions.map(q => q.ID_Question);
+            const placeholders = questionIds.map(() => '?').join(',');
+            
+            await connection.execute(
+                `DELETE FROM Possible_answer WHERE ID_Question IN (${placeholders})`,
+                questionIds
+            );
+        }
+
+        // Delete all questions for this QCM
+        await connection.execute(
+            'DELETE FROM Question WHERE ID_QCM = ?',
+            [qcmId]
+        );
+
+        // Finally, delete the QCM itself
+        await connection.execute(
+            'DELETE FROM QCM WHERE ID_QCM = ?',
+            [qcmId]
+        );
+
+        // Commit transaction
+        await connection.commit();
+
+        res.json({
+            success: true,
+            message: `QCM "${qcmName}" supprimé avec succès`,
+            deletedQcmId: qcmId
+        });
+
+    } catch (error) {
+        // Rollback transaction on error
+        await connection.rollback();
+        next(error);
+    } finally {
+        connection.release();
     }
 });
 

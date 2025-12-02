@@ -7,7 +7,8 @@ export const useAuthStore = defineStore('auth', {
     user: null,
     token: null,
     isAuthenticated: false,
-    isTeacher: false
+    isTeacher: false,
+    isAdmin: false
   }),
   
   getters: {
@@ -31,6 +32,7 @@ export const useAuthStore = defineStore('auth', {
           this.user = response.data.user
           this.isAuthenticated = true
           this.isTeacher = response.data.user.teacher || false
+          this.isAdmin = response.data.user.admin || false
           
           // Sauvegarder dans localStorage
           localStorage.setItem('token', this.token)
@@ -99,6 +101,7 @@ export const useAuthStore = defineStore('auth', {
         this.token = null
         this.isAuthenticated = false
         this.isTeacher = false
+        this.isAdmin = false
         
         localStorage.removeItem('token')
         localStorage.removeItem('user')
@@ -111,6 +114,7 @@ export const useAuthStore = defineStore('auth', {
         this.token = null
         this.isAuthenticated = false
         this.isTeacher = false
+        this.isAdmin = false
         
         localStorage.removeItem('token')
         localStorage.removeItem('user')
@@ -128,6 +132,7 @@ export const useAuthStore = defineStore('auth', {
             this.user = response.data.user
             this.isAuthenticated = true
             this.isTeacher = response.data.user.teacher || false
+            this.isAdmin = response.data.user.admin || false
             
             // Mettre à jour localStorage avec les données fraîches
             localStorage.setItem('user', JSON.stringify(this.user))
@@ -156,6 +161,7 @@ export const useAuthStore = defineStore('auth', {
           this.user = JSON.parse(userStr)
           this.isAuthenticated = true
           this.isTeacher = this.user.teacher || false
+          this.isAdmin = this.user.admin || false
           
           // Vérifier la validité du token de manière asynchrone
           this.checkAuth()

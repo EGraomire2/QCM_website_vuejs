@@ -43,12 +43,25 @@
             </option>
           </select>
         </div>
+
+        <div style="margin-top: 15px;">
+          <label for="difficulty-select">{{ $t('qcm.difficulty') }}</label>
+          <select 
+            id="difficulty-select" 
+            v-model="selectedDifficulty"
+          >
+            <option :value="null">{{ $t('qcm.allDifficulties') }}</option>
+            <option :value="0">{{ $t('qcm.easy') }}</option>
+            <option :value="1">{{ $t('qcm.medium') }}</option>
+            <option :value="2">{{ $t('qcm.hard') }}</option>
+          </select>
+        </div>
       </div>
 
       <!-- Liste des QCM filtrés -->
-      <div v-if="qcms.length > 0">
+      <div v-if="filteredQcms.length > 0">
         <div 
-          v-for="qcm in qcms" 
+          v-for="qcm in filteredQcms" 
           :key="qcm.id" 
           class="div-body"
         >
@@ -115,6 +128,7 @@ export default {
       attempts: [],
       selectedSubjectId: null,
       selectedChapterId: null,
+      selectedDifficulty: null,
       loading: false
     };
   },
@@ -127,6 +141,13 @@ export default {
       return this.chapters.filter(
         chapter => chapter.subjectId === this.selectedSubjectId
       );
+    },
+    // Filtrer les QCM par difficulté
+    filteredQcms() {
+      if (this.selectedDifficulty === null) {
+        return this.qcms;
+      }
+      return this.qcms.filter(qcm => qcm.difficulty === this.selectedDifficulty);
     }
   },
   async mounted() {
@@ -219,9 +240,7 @@ export default {
       return date.toLocaleDateString('fr-FR', {
         year: 'numeric',
         month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
+        day: 'numeric'
       });
     }
   }

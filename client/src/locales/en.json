@@ -5,6 +5,7 @@
   },
   "nav": {
     "home": "Home",
+    "admin": "Administration",
     "createQcm": "Create QCM",
     "qcmList": "QCM List",
     "lessons": "Course Notes",
@@ -104,6 +105,7 @@
     "clickToMarkCorrect": "Click to mark as correct answer",
     "noQcmAvailable": "No QCM available for this chapter.",
     "selectSubjectChapter": "Select a subject and chapter to see available QCMs.",
+    "allDifficulties": "All difficulties",
     "qcmNameRequired": "QCM name is required",
     "selectSubjectRequired": "Please select a subject",
     "selectChapterRequired": "Please select a chapter",
@@ -160,5 +162,32 @@
   "messages": {
     "error": "An error occurred",
     "errorLoadingAttempts": "Error loading attempts"
+  },
+  "admin": {
+    "title": "Administration",
+    "qcmManagement": "QCM Management",
+    "userManagement": "User Management",
+    "qcmList": "QCM List",
+    "userList": "User List",
+    "deleteQcm": "Delete",
+    "confirmDelete": "Confirm Deletion",
+    "confirmDeleteMessage": "Are you sure you want to delete the QCM \"{name}\"? This action is irreversible.",
+    "cancel": "Cancel",
+    "confirmDeleteButton": "Delete",
+    "deleting": "Deleting...",
+    "qcmDeletedSuccess": "QCM deleted successfully",
+    "errorDeletingQcm": "Error deleting QCM",
+    "administrator": "Administrator",
+    "teacher": "Teacher",
+    "student": "Student",
+    "makeTeacher": "Promote to teacher",
+    "removeTeacher": "Revoke teacher",
+    "teacherStatusGranted": "Teacher status granted",
+    "teacherStatusRevoked": "Teacher status revoked",
+    "errorUpdatingUser": "Error updating user",
+    "errorLoadingUsers": "Error loading users",
+    "loadingUsers": "Loading users...",
+    "filterByRole": "Filter by role:",
+    "allRoles": "All roles"
   }
 }

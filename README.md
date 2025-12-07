@@ -11,6 +11,7 @@ cd client && npm install
 cd ../server && npm install
 
 # Lancer le projet
+cd..
 npm run dev
 ```
 

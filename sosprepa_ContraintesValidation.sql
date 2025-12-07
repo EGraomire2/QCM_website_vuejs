@@ -1,18 +1,18 @@
 USE sos_prepa_bdd;
 
-ALTER TABLE Accountt 
-    ADD CONSTRAINT uq_account_id UNIQUE (ID_user),
-    ADD CONSTRAINT uq_account_nickname UNIQUE (Nickname),
-    ADD CONSTRAINT chk_account_score CHECK (Score_account >= 0),
-    ADD CONSTRAINT pk_account PRIMARY KEY (ID_user);
-ALTER TABLE Accountt 
+ALTER TABLE users 
+    ADD CONSTRAINT uq_user_id UNIQUE (ID_user),
+    ADD CONSTRAINT uq_user_email UNIQUE (Email),
+    ADD CONSTRAINT chk_user_score CHECK (Score_account >= 0),
+    ADD CONSTRAINT pk_user PRIMARY KEY (ID_user);
+ALTER TABLE users 
     MODIFY COLUMN ID_user INT NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE QCM 
     ADD CONSTRAINT uq_qcm_id UNIQUE (ID_QCM),
     ADD CONSTRAINT chk_qcm_difficulty CHECK (Difficulty BETWEEN 0 AND 5),
     ADD CONSTRAINT pk_qcm PRIMARY KEY (ID_QCM),
-    ADD CONSTRAINT fk_qcm_user FOREIGN KEY (ID_user) REFERENCES Accountt(ID_user) ON DELETE CASCADE,
+    ADD CONSTRAINT fk_qcm_user FOREIGN KEY (ID_user) REFERENCES users(ID_user) ON DELETE CASCADE,
     ADD CONSTRAINT fk_qcm_chapter FOREIGN KEY (ID_Chapter) REFERENCES Chapter(ID_Chapter) ON DELETE CASCADE;
 ALTER TABLE QCM
     MODIFY COLUMN ID_QCM INT NOT NULL AUTO_INCREMENT;
@@ -51,7 +51,7 @@ ALTER TABLE Attempt
     ADD CONSTRAINT chk_attempt_grade CHECK (Grade BETWEEN 0 AND 20),
     ADD CONSTRAINT pk_attempt PRIMARY KEY (ID_Attempt),
     ADD CONSTRAINT fk_attempt_qcm FOREIGN KEY (ID_QCM) REFERENCES QCM(ID_QCM) ON DELETE CASCADE,
-    ADD CONSTRAINT fk_attempt_user FOREIGN KEY (ID_user) REFERENCES Accountt(ID_user) ON DELETE CASCADE;
+    ADD CONSTRAINT fk_attempt_user FOREIGN KEY (ID_user) REFERENCES users(ID_user) ON DELETE CASCADE;
 ALTER TABLE Attempt 
     MODIFY COLUMN ID_Attempt INT NOT NULL AUTO_INCREMENT;
 

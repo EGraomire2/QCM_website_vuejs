@@ -1,344 +1,351 @@
-# SOSprépa - Plateforme de QCM Interactive
+# SOSprépa - Interactive MCQ Platform
 
 ---
 
-**Nom et ID:** [Votre Nom et ID]  
-**Code d'Intake:** [Votre Code d'Intake]  
-**Matière:** Développement Web  
-**Titre du Projet:** Migration et Modernisation de la Plateforme SOSprépa
+**Name and ID:** [Your Name and ID]  
+**Intake Code:** [Your Intake Code]  
+**Subject:** Web Development  
+**Project Title:** Migration and Modernization of the SOSprépa Platform
 
 ---
 
-## Table des Matières
+## Table of Contents
 
 1. Introduction
-2. Conception
-3. Implémentation
-4. Guide Utilisateur
+2. Design
+3. Implementation
+4. User Guide
 5. Conclusion
-6. Références
+6. References
 
 ---
 
 ## 1. Introduction
 
-### Contexte du Projet
+### Project Context
 
-SOSprépa est une plateforme web que j'ai développée pour aider les étudiants de l'EFREI à réviser leurs cours à travers des QCM interactifs. Le projet initial était en PHP, mais j'ai décidé de le moderniser complètement en utilisant Vue.js pour le frontend et Node.js pour le backend.
+SOSprépa is a web platform I developed to help EFREI students review their courses through interactive multiple-choice quizzes (MCQs). The initial project was built in PHP, but I decided to completely modernize it using Vue.js for the frontend and Node.js for the backend.
 
-### Objectifs
+### Objectives
 
-L'objectif principal était de créer une application moderne et facile à utiliser où :
-- Les étudiants peuvent passer des QCM et voir leurs corrections détaillées
-- Les professeurs peuvent créer des QCM avec différents types de questions
-- Les administrateurs peuvent gérer les utilisateurs et les contenus
+The main objective was to create a modern and user-friendly application where:
+- Students can take MCQs and view their detailed corrections
+- Teachers can create MCQs with different types of questions
+- Administrators can manage users and content
 
-### Technologies Utilisées
+### Technologies Used
 
-**Frontend :**
-- Vue.js 3 pour l'interface utilisateur
-- Vue Router pour la navigation
-- Pinia pour la gestion d'état
-- Axios pour les appels API
-- Vue I18n pour le support multilingue (français/anglais)
+**Frontend:**
+- Vue.js 3 for the user interface
+- Vue Router for navigation
+- Pinia for state management
+- Axios for API calls
+- Vue I18n for multilingual support (French/English)
 
-**Backend :**
-- Node.js avec Express pour l'API
-- MySQL pour la base de données
-- JWT pour l'authentification
-- bcrypt pour sécuriser les mots de passe
+**Backend:**
+- Node.js with Express for the API
+- MySQL for the database
+- JWT for authentication
+- bcrypt to secure passwords
 
-### Fonctionnalités Principales
+### Main Features
 
-- Système d'authentification sécurisé
-- Création de QCM avec questions à choix unique ou multiple
-- Correction automatique avec système de points positifs et négatifs
-- Interface multilingue (français/anglais)
-- Panel d'administration pour gérer les utilisateurs et les QCM
-- Consultation de fiches de révision en PDF
-
----
-
-## 2. Conception
-
-### Architecture Générale
-
-J'ai opté pour une architecture client-serveur classique :
-- Le frontend Vue.js communique avec le backend via une API REST
-- Le backend Node.js gère la logique métier et les accès à la base de données
-- L'authentification se fait par tokens JWT stockés côté client
-
-### Base de Données
-
-La base de données contient 8 tables principales :
-
-**Accountt** : Stocke les utilisateurs avec leurs rôles (étudiant, professeur, admin)
-
-**Subjectt et Chapter** : Organisent les QCM par matières et chapitres
-
-**QCM** : Contient les informations des questionnaires (nom, difficulté, créateur)
-
-**Question** : Stocke les questions avec leurs points et explications
-
-**Possible_answer** : Les réponses possibles pour chaque question
-
-**Attempt** : Enregistre les tentatives des étudiants avec leurs notes
-
-**Answer_question et Has_answered** : Lient les réponses des étudiants aux questions
-
-
-### Structure de Navigation
-
-L'application suit un flux logique simple :
-
-1. **Connexion/Inscription** → Page d'accueil
-2. **Page d'accueil** → Accès aux différentes fonctionnalités selon le rôle
-3. **Sélection QCM** → Réponse au QCM → Correction détaillée
-4. **Création QCM** (professeurs uniquement)
-5. **Panel Admin** (administrateurs uniquement)
-
-Les routes sont protégées : si un étudiant essaie d'accéder à la création de QCM, il est automatiquement redirigé vers l'accueil.
-
-### Wireframes Principaux
-
-**Page de Connexion**
-- Formulaire simple avec email et mot de passe
-- Lien vers l'inscription
-- Sélecteur de langue (drapeaux FR/EN)
-
-**Page d'Accueil**
-- Menu de navigation avec les options selon le rôle
-- Cartes cliquables pour accéder aux fonctionnalités principales
-- Message de bienvenue personnalisé
-
-**Sélection de QCM**
-- Filtres par matière, chapitre et difficulté
-- Liste des QCM disponibles avec badges de difficulté (Facile/Moyen/Difficile)
-- Bouton "Commencer" pour chaque QCM
-
-**Réponse au QCM**
-- Questions affichées une par une ou toutes ensemble
-- Boutons radio pour choix unique, cases à cocher pour choix multiple
-- Indication du nombre de points par question
-- Bouton de soumission en bas de page
-
-**Correction**
-- Note finale affichée en haut
-- Pour chaque question : réponses en vert (correctes) ou rouge (incorrectes)
-- Indication des réponses sélectionnées par l'étudiant
-- Explications du professeur si disponibles
-
-**Création de QCM (Professeurs)**
-- Formulaire pour les infos générales (nom, matière, chapitre, difficulté)
-- Section pour ajouter des questions avec leurs réponses
-- Possibilité de marquer plusieurs réponses comme correctes
-- Champs pour les points positifs et négatifs
-
-**Panel Admin**
-- Onglet "Gestion des QCM" : liste avec possibilité de suppression
-- Onglet "Gestion des Utilisateurs" : liste avec filtres par rôle
-- Actions pour promouvoir/révoquer le statut professeur
+- Secure authentication system
+- MCQ creation with single or multiple choice questions
+- Automatic grading with positive and negative points system
+- Multilingual interface (French/English)
+- Administration panel to manage users and MCQs
+- Access to revision sheets in PDF format
 
 ---
 
-## 3. Implémentation
+## 2. Design
 
-### Système d'Authentification
+### General Architecture
 
-J'ai implémenté un système d'authentification sécurisé avec JWT. Quand un utilisateur se connecte :
+I opted for a classic client-server architecture:
+- The Vue.js frontend communicates with the backend via a REST API
+- The Node.js backend handles business logic and database access
+- Authentication is done through JWT tokens stored on the client side
 
-1. Le serveur vérifie l'email et le mot de passe (haché avec bcrypt)
-2. Si c'est correct, il génère un token JWT contenant l'ID, l'email et le rôle
-3. Le token est renvoyé au client et stocké dans le localStorage
-4. Pour chaque requête suivante, le token est envoyé dans l'header Authorization
-5. Le serveur vérifie le token avant d'autoriser l'accès aux ressources
+### Database
 
-Le middleware d'authentification vérifie automatiquement les permissions selon les rôles.
+The database contains 8 main tables:
 
-### Création de QCM
+**users**: Stores users with their roles (student, teacher, admin)
 
-La création de QCM utilise des transactions pour garantir la cohérence des données. Si une erreur survient pendant la création (par exemple lors de l'ajout d'une question), toute l'opération est annulée.
+**Subjectt and Chapter**: Organize MCQs by subjects and chapters
 
-Le type de question (choix unique ou multiple) est détecté automatiquement selon le nombre de réponses marquées comme correctes :
-- 1 réponse correcte → Choix unique
-- 2+ réponses correctes → Choix multiple
+**QCM**: Contains quiz information (name, difficulty, creator)
 
-### Algorithme de Notation
+**Question**: Stores questions with their points and explanations
 
-J'ai développé un système de notation qui prend en compte les points positifs et négatifs :
+**Possible_answer**: The possible answers for each question
 
-**Pour les questions à choix unique :**
-- Bonne réponse = +points de la question
-- Mauvaise réponse = -points négatifs
-- Pas de réponse = 0 point
+**Attempt**: Records student attempts with their grades
 
-**Pour les questions à choix multiple :**
-- Chaque bonne réponse sélectionnée = +points proportionnels
-- Chaque bonne réponse manquée = -points négatifs
-- Chaque mauvaise réponse sélectionnée = -points négatifs
-- Le score d'une question ne peut pas être négatif (minimum 0)
+**Answer_question and Has_answered**: Link student answers to questions
 
-La note finale est calculée ainsi : (Points obtenus / Points totaux) × 20, avec un minimum de 0/20.
+### Navigation Structure
 
-### Internationalisation
+The application follows a simple logical flow:
 
-J'ai ajouté le support de deux langues (français et anglais) avec Vue I18n. Tous les textes de l'interface sont traduits, et l'utilisateur peut changer de langue à tout moment via les drapeaux dans l'en-tête. La préférence est sauvegardée dans le localStorage.
+1. **Login/Registration** → Home page
+2. **Home page** → Access to different features based on role
+3. **MCQ Selection** → Answer MCQ → Detailed correction
+4. **MCQ Creation** (teachers only)
+5. **Admin Panel** (administrators only)
 
-### Panel d'Administration
+Routes are protected: if a student tries to access MCQ creation, they are automatically redirected to the home page.
 
-Le panel admin permet de :
-- Voir tous les QCM et les supprimer si nécessaire
-- Gérer les utilisateurs avec filtres par rôle
-- Promouvoir des étudiants en professeurs
-- Révoquer le statut professeur
+### Main Wireframes
 
-Les utilisateurs sont automatiquement triés par hiérarchie (Admin > Professeur > Étudiant).
+**Login Page**
+- Simple form with email and password
+- Link to registration
+- Language selector (FR/EN flags)
+
+**Home Page**
+- Navigation menu with options based on role
+- Clickable cards to access main features
+- Personalized welcome message
+
+**MCQ Selection**
+- Filters by subject, chapter, and difficulty
+- List of available MCQs with difficulty badges (Easy/Medium/Hard)
+- "Start" button for each MCQ
+
+**MCQ Answer Page**
+- Questions displayed one by one or all together
+- Radio buttons for single choice, checkboxes for multiple choice
+- Point indication per question
+- Submit button at the bottom of the page
+
+**Correction Page**
+- Final grade displayed at the top
+- For each question: answers in green (correct) or red (incorrect)
+- Indication of answers selected by the student
+- Teacher's explanations if available
+
+**MCQ Creation (Teachers)**
+- Form for general information (name, subject, chapter, difficulty)
+- Section to add questions with their answers
+- Ability to mark multiple answers as correct
+- Fields for positive and negative points
+
+**Admin Panel**
+- "MCQ Management" tab: list with deletion option
+- "User Management" tab: list with role filters
+- Actions to promote/revoke teacher status
 
 ---
 
-## 4. Guide Utilisateur
+## 3. Implementation
 
-### Pour les Étudiants
+### Authentication System
 
-**S'inscrire et se connecter**
-1. Créer un compte avec email, nom et mot de passe
-2. Se connecter avec les identifiants
-3. Accéder à la page d'accueil
+I implemented a secure authentication system with JWT. When a user logs in:
 
-**Passer un QCM**
-1. Cliquer sur "Passer un QCM" ou utiliser le menu "QCM"
-2. Choisir une matière et un chapitre
-3. Optionnel : filtrer par difficulté
-4. Cliquer sur "Commencer" sur le QCM souhaité
-5. Répondre aux questions (attention au type : choix unique ou multiple)
-6. Cliquer sur "Soumettre les réponses"
+1. The server verifies the email and password (hashed with bcrypt)
+2. If correct, it generates a JWT token containing the ID, email, and role
+3. The token is sent back to the client and stored in localStorage
+4. For each subsequent request, the token is sent in the Authorization header
+5. The server verifies the token before authorizing access to resources
 
-**Voir la correction**
-- La correction s'affiche automatiquement après la soumission
-- Les réponses correctes sont en vert, les incorrectes en rouge
-- Les points obtenus sont indiqués pour chaque question
-- Les explications du professeur aident à comprendre les erreurs
+The authentication middleware automatically checks permissions based on roles.
 
-**Consulter les fiches de révision**
-1. Aller dans "Leçons"
-2. Sélectionner un PDF dans la liste
-3. Le visualiser directement ou le télécharger
+### MCQ Creation
 
-**Changer de langue**
-- Cliquer sur le drapeau français 🇫🇷 ou anglais 🇬🇧 dans l'en-tête
-- L'interface se met à jour immédiatement
+MCQ creation uses transactions to ensure data consistency. If an error occurs during creation (for example when adding a question), the entire operation is cancelled.
 
-### Pour les Professeurs
+The question type (single or multiple choice) is automatically detected based on the number of answers marked as correct:
+- 1 correct answer → Single choice
+- 2+ correct answers → Multiple choice
 
-Les professeurs ont toutes les fonctionnalités des étudiants, plus :
+### Grading Algorithm
 
-**Créer une matière ou un chapitre**
-1. Aller dans "Créer Matière/Chapitre"
-2. Remplir le nom et valider
-3. La matière/chapitre est immédiatement disponible
+I developed a grading system that takes into account positive and negative points:
 
-**Créer un QCM**
-1. Aller dans "Créer un QCM"
-2. Remplir les informations : nom, matière, chapitre, difficulté
-3. Ajouter des questions :
-   - Écrire l'énoncé
-   - Définir les points positifs et négatifs
-   - Ajouter au moins 2 réponses
-   - Cocher les réponses correctes
-   - Ajouter une explication (optionnel)
-4. Cliquer sur "Créer le QCM"
+**For single choice questions:**
+- Correct answer = +question points
+- Wrong answer = -negative points
+- No answer = 0 points
 
-Le système vérifie automatiquement que tout est correct avant de créer le QCM.
+**For multiple choice questions:**
+- Each correct answer selected = +proportional points
+- Each correct answer missed = -negative points
+- Each wrong answer selected = -negative points
+- A question's score cannot be negative (minimum 0)
 
-### Pour les Administrateurs
+The final grade is calculated as follows: (Points earned / Total points) × 20, with a minimum of 0/20.
 
-Les administrateurs ont toutes les fonctionnalités des professeurs, plus :
+### Internationalization
 
-**Gérer les QCM**
-1. Aller dans "Admin" → onglet "Gestion des QCM"
-2. Voir tous les QCM de la plateforme
-3. Supprimer un QCM si nécessaire (avec confirmation)
+I added support for two languages (French and English) with Vue I18n. All interface texts are translated, and users can change language at any time via the flags in the header. The preference is saved in localStorage.
 
-**Gérer les utilisateurs**
-1. Aller dans "Admin" → onglet "Gestion des Utilisateurs"
-2. Filtrer par rôle si besoin
-3. Promouvoir un étudiant en professeur
-4. Révoquer le statut professeur d'un utilisateur
+### Administration Panel
 
-Les modifications sont immédiates et affectent directement les permissions de l'utilisateur.
+The admin panel allows you to:
+- View all MCQs and delete them if necessary
+- Manage users with role filters
+- Promote students to teachers
+- Revoke teacher status
+
+Users are automatically sorted by hierarchy (Admin > Teacher > Student).
+
+---
+
+## 4. User Guide
+
+### For Students
+
+**Sign up and log in**
+1. Create an account with email, name, and password
+2. Log in with credentials
+3. Access the home page
+
+**Take an MCQ**
+1. Click on "Take an MCQ" or use the "MCQ" menu
+2. Choose a subject and chapter
+3. Optional: filter by difficulty
+4. Click "Start" on the desired MCQ
+5. Answer the questions (pay attention to the type: single or multiple choice)
+6. Click "Submit answers"
+
+**View the correction**
+- The correction is displayed automatically after submission
+- Correct answers are in green, incorrect ones in red
+- Points earned are indicated for each question
+- Teacher's explanations help understand mistakes
+
+**Access revision sheets**
+1. Go to "Lessons"
+2. Select a PDF from the list
+3. View it directly or download it
+
+**Change language**
+- Click on the French 🇫🇷 or English 🇬🇧 flag in the header
+- The interface updates immediately
+
+### For Teachers
+
+Teachers have all student features, plus:
+
+**Create a subject or chapter**
+1. Go to "Create Subject/Chapter"
+2. Fill in the name and validate
+3. The subject/chapter is immediately available
+
+**Create an MCQ**
+1. Go to "Create an MCQ"
+2. Fill in the information: name, subject, chapter, difficulty
+3. Add questions:
+   - Write the statement
+   - Define positive and negative points
+   - Add at least 2 answers
+   - Check the correct answers
+   - Add an explanation (optional)
+4. Click "Create MCQ"
+
+The system automatically checks that everything is correct before creating the MCQ.
+
+### For Administrators
+
+Administrators have all teacher features, plus:
+
+**Manage MCQs**
+1. Go to "Admin" → "MCQ Management" tab
+2. View all platform MCQs
+3. Delete an MCQ if necessary (with confirmation)
+
+**Manage users**
+1. Go to "Admin" → "User Management" tab
+2. Filter by role if needed
+3. Promote a student to teacher
+4. Revoke a user's teacher status
+
+Changes are immediate and directly affect the user's permissions.
 
 ---
 
 ## 5. Conclusion
 
-### Bilan du Projet
+### Project Summary
 
-Ce projet m'a permis de moderniser complètement la plateforme SOSprépa en passant d'une architecture PHP monolithique à une architecture moderne avec Vue.js et Node.js. Le résultat est une application plus rapide, plus maintenable et plus agréable à utiliser.
+This project allowed me to completely modernize the SOSprépa platform by moving from a monolithic PHP architecture to a modern architecture with Vue.js and Node.js. The result is a faster, more maintainable, and more user-friendly application.
 
-Les principaux acquis de ce projet sont :
-- Maîtrise de Vue.js 3 et de son écosystème (Router, Pinia, I18n)
-- Développement d'une API REST sécurisée avec Node.js/Express
-- Gestion de l'authentification avec JWT
-- Utilisation de transactions pour garantir la cohérence des données
-- Implémentation d'un système de rôles et permissions
-- Création d'une interface multilingue
+The main achievements of this project are:
+- Mastery of Vue.js 3 and its ecosystem (Router, Pinia, I18n)
+- Development of a secure REST API with Node.js/Express
+- Authentication management with JWT
+- Use of transactions to ensure data consistency
+- Implementation of a role and permission system
+- Creation of a multilingual interface
 
-### Difficultés Rencontrées
+### Challenges Encountered
 
-La principale difficulté a été de reproduire fidèlement l'algorithme de notation de la version PHP, notamment pour les questions à choix multiple. J'ai dû créer des tests unitaires pour m'assurer que les calculs étaient corrects.
+The main difficulty was faithfully reproducing the grading algorithm from the PHP version, especially for multiple choice questions. I had to create unit tests to ensure the calculations were correct.
 
-La gestion des transactions MySQL a aussi demandé de l'attention pour éviter les incohérences lors de la création de QCM avec plusieurs questions.
+Managing MySQL transactions also required attention to avoid inconsistencies when creating MCQs with multiple questions.
 
-### Améliorations Possibles
+### Possible Improvements
 
-Si j'avais plus de temps, j'ajouterais :
+If I had more time, I would add:
 
-**Statistiques et suivi**
-- Tableau de bord pour voir sa progression
-- Graphiques par matière
-- Historique des tentatives
+**Statistics and tracking**
+- Dashboard to view progress
+- Charts by subject
+- Attempt history
 
-**Fonctionnalités sociales**
-- Commentaires sur les QCM
-- Forum de discussion
-- Partage de ressources entre étudiants
+**Social features**
+- Comments on MCQs
+- Discussion forum
+- Resource sharing between students
 
-**Amélioration de l'expérience**
-- Mode examen avec chronomètre
-- QCM aléatoires générés automatiquement
-- Notifications pour rappeler de réviser
-- Application mobile
+**Experience improvements**
+- Exam mode with timer
+- Randomly generated MCQs
+- Notifications to remind to review
+- Mobile application
 
-**Côté technique**
-- Mise en cache pour améliorer les performances
-- Authentification à deux facteurs
-- Export des notes en PDF
-- API publique pour intégrations tierces
+**Technical side**
+- Caching to improve performance
+- Two-factor authentication
+- Export grades to PDF
+- Public API for third-party integrations
 
-### Conclusion Générale
+### General Conclusion
 
-SOSprépa est maintenant une plateforme moderne et fonctionnelle qui répond aux besoins des étudiants et des professeurs. L'architecture choisie permet d'ajouter facilement de nouvelles fonctionnalités à l'avenir. Ce projet m'a permis de mettre en pratique les concepts de développement web moderne et de créer une application complète de A à Z.
-
----
-
-## 6. Références
-
-Vue.js Official Documentation. (2024). Retrieved from https://vuejs.org/
-
-Node.js Documentation. (2024). Retrieved from https://nodejs.org/docs/
-
-Express.js API Reference. (2024). Retrieved from https://expressjs.com/
-
-MySQL 8.0 Reference Manual. (2024). Retrieved from https://dev.mysql.com/doc/
-
-JWT Introduction. (2024). Retrieved from https://jwt.io/introduction
-
-Vue Router Documentation. (2024). Retrieved from https://router.vuejs.org/
-
-Pinia Documentation. (2024). Retrieved from https://pinia.vuejs.org/
-
-Vue I18n Documentation. (2024). Retrieved from https://vue-i18n.intlify.dev/
+SOSprépa is now a modern and functional platform that meets the needs of students and teachers. The chosen architecture makes it easy to add new features in the future. This project allowed me to put into practice modern web development concepts and create a complete application from A to Z.
 
 ---
 
-**Fin du Rapport**
+## 6. References
+
+Axios. (2024). *Axios HTTP client documentation*. https://axios-http.com/
+
+bcrypt. (2024). *bcrypt npm package*. https://www.npmjs.com/package/bcrypt
+
+Express.js. (2024). *Express API reference*. https://expressjs.com/
+
+Jones, M., Bradley, J., & Sakimura, N. (2015). *JSON Web Token (JWT)*. RFC 7519. https://jwt.io/introduction
+
+Mozilla Developer Network. (2024). *HTTP authentication*. https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication
+
+Node.js Foundation. (2024). *Node.js documentation*. https://nodejs.org/docs/
+
+Oracle Corporation. (2024). *MySQL 8.0 reference manual*. https://dev.mysql.com/doc/
+
+Pinia. (2024). *Pinia documentation - The Vue store that you will enjoy using*. https://pinia.vuejs.org/
+
+Vue.js. (2024). *Vue.js official guide*. https://vuejs.org/guide/
+
+Vue I18n. (2024). *Vue I18n documentation - Internationalization plugin for Vue.js*. https://vue-i18n.intlify.dev/
+
+Vue Router. (2024). *Vue Router documentation - The official router for Vue.js*. https://router.vuejs.org/
+
+W3C. (2023). *Web Content Accessibility Guidelines (WCAG) 2.1*. https://www.w3.org/WAI/WCAG21/quickref/
+
+---
+
+**End of Report**

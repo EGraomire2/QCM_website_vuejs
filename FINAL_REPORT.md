@@ -142,56 +142,416 @@ Routes are protected: if a student tries to access MCQ creation, they are automa
 
 ## 3. Implementation
 
-### Authentication System
+This section explains the source code for the major features of the application.
 
-I implemented a secure authentication system with JWT. When a user logs in:
+### 3.1 Authentication System with JWT
 
-1. The server verifies the email and password (hashed with bcrypt)
-2. If correct, it generates a JWT token containing the ID, email, and role
-3. The token is sent back to the client and stored in localStorage
-4. For each subsequent request, the token is sent in the Authorization header
-5. The server verifies the token before authorizing access to resources
+The authentication system uses JSON Web Tokens (JWT) to secure user sessions. Here's how the login process works:
 
-The authentication middleware automatically checks permissions based on roles.
+**Backend - Login Service (server/services/auth.js)**
 
-### MCQ Creation
+```javascript
+async login(email, password) {
+    // Step 1: Find user in database by email
+    const [users] = await pool.execute(
+        'SELECT ID_user, Nickname, Email, Password, Teacher, Administrator 
+         FROM users WHERE Email = ?',
+        [email]
+    );
+    
+    // Step 2: Check if user exists
+    if (users.length === 0) {
+        throw new Error('Invalid credentials');
+    }
+    
+    const user = users[0];
+    
+    // Step 3: Verify password using bcrypt
+    const isValid = await bcrypt.compare(password, user.Password);
+    if (!isValid) {
+        throw new Error('Invalid credentials');
+    }
+    
+    // Step 4: Generate JWT token with user information
+    const token = jwt.sign(
+        {
+            userId: user.ID_user,
+            email: user.Email,
+            teacher: user.Teacher,
+            admin: user.Administrator
+        },
+        JWT_SECRET,
+        { expiresIn: '24h' }  // Token expires after 24 hours
+    );
+    
+    // Step 5: Store token in database
+    await pool.execute(
+        'UPDATE users SET Token = ? WHERE ID_user = ?',
+        [token, user.ID_user]
+    );
+    
+    // Step 6: Return token and user info to client
+    return {
+        token,
+        user: {
+            id: user.ID_user,
+            nickname: user.Nickname,
+            email: user.Email,
+            teacher: user.Teacher,
+            admin: user.Administrator
+        }
+    };
+}
+```
 
-MCQ creation uses transactions to ensure data consistency. If an error occurs during creation (for example when adding a question), the entire operation is cancelled.
+**Frontend - Authentication Store (client/src/stores/auth.js)**
 
-The question type (single or multiple choice) is automatically detected based on the number of answers marked as correct:
-- 1 correct answer → Single choice
-- 2+ correct answers → Multiple choice
+```javascript
+// Pinia store for managing authentication state
+export const useAuthStore = defineStore('auth', {
+    state: () => ({
+        user: null,
+        token: null,
+        isAuthenticated: false
+    }),
+    
+    actions: {
+        async login(email, password) {
+            // Call backend API
+            const response = await api.post('/api/login', { email, password });
+            
+            // Store token and user info
+            this.token = response.data.token;
+            this.user = response.data.user;
+            this.isAuthenticated = true;
+            
+            // Persist in localStorage for page refreshes
+            localStorage.setItem('token', this.token);
+            localStorage.setItem('user', JSON.stringify(this.user));
+        }
+    }
+});
+```
 
-### Grading Algorithm
+**Axios Interceptor - Automatic Token Injection (client/src/services/api.js)**
 
-I developed a grading system that takes into account positive and negative points:
+```javascript
+// Add JWT token to every request automatically
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        // Add Authorization header with Bearer token
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
 
-**For single choice questions:**
-- Correct answer = +question points
-- Wrong answer = -negative points
-- No answer = 0 points
+// Handle authentication errors
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            // Token expired or invalid - logout user
+            const authStore = useAuthStore();
+            authStore.logout();
+            router.push('/login');
+        }
+        return Promise.reject(error);
+    }
+);
+```
 
-**For multiple choice questions:**
-- Each correct answer selected = +proportional points
-- Each correct answer missed = -negative points
-- Each wrong answer selected = -negative points
-- A question's score cannot be negative (minimum 0)
+### 3.2 MCQ Creation with Transactions
 
-The final grade is calculated as follows: (Points earned / Total points) × 20, with a minimum of 0/20.
+Creating an MCQ involves multiple database operations that must all succeed or all fail. I use MySQL transactions to ensure data consistency.
 
-### Internationalization
+**Backend - QCM Creation (server/routes/qcm.js)**
 
-I added support for two languages (French and English) with Vue I18n. All interface texts are translated, and users can change language at any time via the flags in the header. The preference is saved in localStorage.
+```javascript
+router.post('/create', requireAuth, requireTeacher, async (req, res) => {
+    const connection = await pool.getConnection();
+    
+    try {
+        // Start transaction
+        await connection.beginTransaction();
+        
+        // Step 1: Insert QCM
+        const [qcmResult] = await connection.execute(
+            'INSERT INTO QCM (Name_QCM, Difficulty, ID_user, ID_Chapter) 
+             VALUES (?, ?, ?, ?)',
+            [qcmData.qcmName, qcmData.difficulty, userId, qcmData.qcmChapter]
+        );
+        const qcmId = qcmResult.insertId;
+        
+        // Step 2: Insert each question
+        for (const question of qcmData.questions) {
+            // Determine question type automatically
+            const correctCount = question.isCorrect.filter(Boolean).length;
+            const questionType = correctCount > 1 ? 'multiple' : 'unique';
+            
+            const [questionResult] = await connection.execute(
+                'INSERT INTO Question (Question_heading, Number_of_points, 
+                 Type_of_question, Negative_points, Explanation, ID_QCM) 
+                 VALUES (?, ?, ?, ?, ?, ?)',
+                [question.question, question.questionPoints, questionType,
+                 question.negativePoints, question.explanation, qcmId]
+            );
+            const questionId = questionResult.insertId;
+            
+            // Step 3: Insert answers for this question
+            for (let i = 0; i < question.answers.length; i++) {
+                await connection.execute(
+                    'INSERT INTO Possible_answer (Proposition, Validity, ID_Question) 
+                     VALUES (?, ?, ?)',
+                    [question.answers[i], question.isCorrect[i] ? 1 : 0, questionId]
+                );
+            }
+        }
+        
+        // Commit transaction - all operations succeeded
+        await connection.commit();
+        res.json({ success: true, qcmId });
+        
+    } catch (error) {
+        // Rollback transaction - undo all changes
+        await connection.rollback();
+        res.status(500).json({ success: false, message: error.message });
+    } finally {
+        connection.release();
+    }
+});
+```
 
-### Administration Panel
+### 3.3 Grading Algorithm
 
-The admin panel allows you to:
-- View all MCQs and delete them if necessary
-- Manage users with role filters
-- Promote students to teachers
-- Revoke teacher status
+The grading system calculates scores based on correct/incorrect answers with penalties.
 
-Users are automatically sorted by hierarchy (Admin > Teacher > Student).
+**Backend - Scoring Service (server/services/scoring.js)**
+
+```javascript
+// Calculate score for a single-choice question
+scoreUniqueQuestion(question, userAnswers, correctAnswers) {
+    const userAnswer = userAnswers[0];  // Only one answer possible
+    const correctAnswer = correctAnswers[0];
+    
+    if (userAnswer === correctAnswer) {
+        // Correct answer: award full points
+        return question.Number_of_points;
+    } else if (userAnswer) {
+        // Wrong answer: deduct negative points
+        return -question.Negative_points;
+    } else {
+        // No answer: zero points
+        return 0;
+    }
+}
+
+// Calculate score for a multiple-choice question
+scoreMultipleQuestion(question, userAnswers, correctAnswers) {
+    let score = 0;
+    const pointsPerCorrect = question.Number_of_points / correctAnswers.length;
+    
+    // Check each correct answer
+    for (const correctId of correctAnswers) {
+        if (userAnswers.includes(correctId)) {
+            // Correct answer selected: add proportional points
+            score += pointsPerCorrect;
+        } else {
+            // Correct answer missed: deduct penalty
+            score -= question.Negative_points;
+        }
+    }
+    
+    // Check for wrong answers selected
+    for (const userAnswer of userAnswers) {
+        if (!correctAnswers.includes(userAnswer)) {
+            // Wrong answer selected: deduct penalty
+            score -= question.Negative_points;
+        }
+    }
+    
+    // Question score cannot be negative
+    return Math.max(0, score);
+}
+
+// Calculate final grade for entire MCQ
+async scoreAttempt(qcmId, userId, answers) {
+    let totalPoints = 0;
+    let earnedPoints = 0;
+    
+    // Score each question
+    for (const question of questions) {
+        totalPoints += question.Number_of_points;
+        
+        const questionScore = question.Type_of_question === 'unique'
+            ? this.scoreUniqueQuestion(question, userAnswers, correctAnswers)
+            : this.scoreMultipleQuestion(question, userAnswers, correctAnswers);
+        
+        earnedPoints += questionScore;
+    }
+    
+    // Calculate final grade out of 20
+    const grade = (earnedPoints / totalPoints) * 20;
+    const finalGrade = Math.max(0, grade);  // Minimum grade is 0
+    
+    return { grade: finalGrade, earnedPoints, totalPoints };
+}
+```
+
+### 3.4 Route Protection with Middleware
+
+Routes are protected based on user roles using middleware functions.
+
+**Backend - Authentication Middleware (server/middleware/auth.js)**
+
+```javascript
+// Verify JWT token
+export const requireAuth = (req, res, next) => {
+    try {
+        // Extract token from Authorization header
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(401).json({ message: 'No token provided' });
+        }
+        
+        const token = authHeader.substring(7);
+        
+        // Verify and decode token
+        const decoded = jwt.verify(token, JWT_SECRET);
+        
+        // Add user info to request object
+        req.user = {
+            userId: decoded.userId,
+            email: decoded.email,
+            teacher: decoded.teacher,
+            admin: decoded.admin
+        };
+        
+        next();  // Continue to route handler
+    } catch (error) {
+        return res.status(401).json({ message: 'Invalid token' });
+    }
+};
+
+// Verify teacher role
+export const requireTeacher = (req, res, next) => {
+    if (!req.user.teacher && !req.user.admin) {
+        return res.status(403).json({ message: 'Teacher access required' });
+    }
+    next();
+};
+
+// Verify admin role
+export const requireAdmin = (req, res, next) => {
+    if (!req.user.admin) {
+        return res.status(403).json({ message: 'Admin access required' });
+    }
+    next();
+};
+```
+
+**Frontend - Route Guards (client/src/router/index.js)**
+
+```javascript
+// Global navigation guard
+router.beforeEach((to, from, next) => {
+    const authStore = useAuthStore();
+    
+    // Restore session from localStorage
+    if (!authStore.isAuthenticated) {
+        authStore.restoreSession();
+    }
+    
+    // Check if route requires authentication
+    if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+        return next('/login');
+    }
+    
+    // Check if route requires teacher role
+    if (to.meta.requiresTeacher && !authStore.isTeacher && !authStore.isAdmin) {
+        return next('/');
+    }
+    
+    // Check if route requires admin role
+    if (to.meta.requiresAdmin && !authStore.isAdmin) {
+        return next('/');
+    }
+    
+    next();  // Allow navigation
+});
+```
+
+### 3.5 Internationalization Implementation
+
+The application supports French and English using Vue I18n.
+
+**Configuration (client/src/main.js)**
+
+```javascript
+import { createI18n } from 'vue-i18n';
+import fr from './locales/fr.json';
+import en from './locales/en.json';
+
+// Create i18n instance
+const i18n = createI18n({
+    legacy: false,
+    locale: localStorage.getItem('language') || 'fr',  // Default to French
+    fallbackLocale: 'fr',
+    messages: { fr, en }
+});
+
+app.use(i18n);
+```
+
+**Usage in Components**
+
+```vue
+<template>
+  <div>
+    <!-- Use $t() to translate text -->
+    <h1>{{ $t('qcm.select') }}</h1>
+    <button>{{ $t('qcm.start') }}</button>
+    
+    <!-- Language selector -->
+    <button @click="changeLanguage('fr')">🇫🇷</button>
+    <button @click="changeLanguage('en')">🇬🇧</button>
+  </div>
+</template>
+
+<script>
+import { useI18n } from 'vue-i18n';
+
+export default {
+    setup() {
+        const { locale } = useI18n();
+        
+        const changeLanguage = (lang) => {
+            locale.value = lang;
+            localStorage.setItem('language', lang);
+        };
+        
+        return { changeLanguage };
+    }
+};
+</script>
+```
+
+**Translation Files (client/src/locales/fr.json)**
+
+```json
+{
+    "nav": {
+        "home": "Accueil",
+        "qcm": "QCM",
+        "create": "Créer"
+    },
+    "qcm": {
+        "select": "Sélectionner un QCM",
+        "start": "Commencer",
+        "submit": "Soumettre"
+    }
+}
+```
 
 ---
 
